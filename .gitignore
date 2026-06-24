@@ -1,0 +1,14 @@
+.env
+*.db
+*.db-shm
+*.db-wal
+logs/
+sessions/
+memories/
+workspace/
+plans/
+local/
+cache/
+__pycache__/
+.pytest_cache/
+.DS_Store

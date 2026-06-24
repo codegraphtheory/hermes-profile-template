@@ -1,0 +1,22 @@
+name: hermes-profile-template
+version: 0.1.0
+description: "Starter distribution for building custom Hermes Agent profiles with AI assistance."
+hermes_requires: ">=0.12.0"
+author: "CodeGraphTheory"
+license: "MIT"
+env_requires:
+  - name: OPENROUTER_API_KEY
+    description: "Optional model provider key. Use your preferred Hermes provider instead if already configured."
+    required: false
+  - name: GITHUB_TOKEN
+    description: "Optional token for GitHub-heavy profiles. Prefer gh auth when possible."
+    required: false
+distribution_owned:
+  - SOUL.md
+  - config.yaml
+  - mcp.json
+  - skills/
+  - cron/
+  - distribution.yaml
+  - README.md
+  - AGENTS.md
