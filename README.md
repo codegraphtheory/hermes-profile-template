@@ -1,166 +1,151 @@
 # Hermes Profile Template
 
-A production-grade starter kit for building custom Hermes Agent profiles with AI assistance.
+Build high quality Hermes Agent profile distributions quickly.
 
-This repository is for people who want to ship excellent Hermes profiles, not just a loose `SOUL.md`. It gives you a complete profile distribution scaffold, profile authoring rules, validation scripts, GitHub Actions, and AI-agent instructions so Claude Code, Codex, Hermes, Cursor, and other coding agents can help you build and maintain high quality profiles safely.
+This repository is for people who want to create custom Hermes profiles that are installable, safe to publish, easy to maintain, and friendly to AI coding agents. Use it to create a new profile from a few parameters, validate the result, install it locally, then publish it for others to install with `hermes profile install`.
 
-## What this template optimizes for
+## What you can do with it
 
-- Fast profile creation with clear defaults.
-- High quality `SOUL.md` identity documents.
-- Explicit tool, skill, memory, cron, and MCP boundaries.
-- Safe secret handling. No credentials in git.
-- Hermes-native profile distributions using `distribution.yaml`.
-- AI-friendly repository instructions through `AGENTS.md`.
-- Repeatable validation before publishing.
-- Easy handoff to users through `hermes profile install`.
+- Create a complete Hermes profile distribution from command-line flags.
+- Create a deterministic profile from a reusable YAML params file.
+- Install this repository as a Hermes profile that helps you create other profiles interactively.
+- Validate a profile before publishing it.
+- Publish generated profiles so other users can install them from GitHub.
 
-## Repository layout
+## Requirements
 
-```text
-.
-├── AGENTS.md                         # Hard rules for AI coding agents
-├── README.md                         # Human guide
-├── distribution.yaml                 # Example Hermes profile distribution manifest
-├── SOUL.md                           # Example profile identity document
-├── config.yaml                       # Safe example Hermes config
-├── .env.EXAMPLE                      # Environment variable template, no secrets
-├── mcp.json                          # Example MCP config stub
-├── skills/
-│   └── profile-craft/SKILL.md        # Reusable skill for profile authoring
-├── templates/
-│   ├── profile/                      # Copyable profile distribution skeleton
-│   ├── skill/                        # Copyable Hermes skill skeleton
-│   └── prompts/                      # Prompts for AI-assisted profile design
-├── scripts/
-│   ├── new_profile.py                # Instantiate a profile from CLI flags
-│   ├── generate_profile.py           # Deterministic params-driven generator
-│   └── validate_profile.py           # Validate distribution quality gates
-└── .github/workflows/validate.yml    # CI validation
+- Hermes Agent installed and available as `hermes`.
+- Python 3.10 or newer.
+- `pyyaml` for validation and generation:
+
+```bash
+python3 -m pip install pyyaml
 ```
 
-## Quick start
+## Option 1: Use this as a GitHub template
+
+Open:
+
+```text
+https://github.com/codegraphtheory/hermes-profile-template
+```
+
+Click `Use this template`, create a new repository, then clone your new repo:
+
+```bash
+git clone https://github.com/YOUR_ORG/YOUR_PROFILE_REPO.git
+cd YOUR_PROFILE_REPO
+python3 scripts/validate_profile.py .
+```
+
+Edit the profile files, then validate again before publishing.
+
+## Option 2: Create a profile from command-line flags
 
 ```bash
 git clone https://github.com/codegraphtheory/hermes-profile-template.git
 cd hermes-profile-template
-python3 scripts/validate_profile.py .
-```
 
-Create a new profile distribution from direct CLI options:
-
-```bash
 python3 scripts/new_profile.py \
   --name security-reviewer \
   --display-name "Security Reviewer" \
   --description "Reviews code and architecture for security risk" \
   --output ../security-reviewer
+
 cd ../security-reviewer
 python3 scripts/validate_profile.py .
 ```
 
-Or create one deterministically from a reusable params file:
+Install it locally:
 
 ```bash
-cp templates/profile.params.yaml /tmp/security-reviewer.params.yaml
-# Edit /tmp/security-reviewer.params.yaml
-python3 scripts/generate_profile.py \
-  --params /tmp/security-reviewer.params.yaml \
-  --output ../security-reviewer
-```
-
-Install the generated profile locally with Hermes:
-
-```bash
-hermes profile install ../security-reviewer --alias
+hermes profile install . --alias
 security-reviewer chat
 ```
 
-Publish it when ready:
+## Option 3: Create a profile from a params file
+
+Copy the sample params file:
 
 ```bash
-git init
-git add .
-git commit -m "feat: initial security reviewer profile"
-git remote add origin git@github.com:YOUR_ORG/security-reviewer.git
-git push -u origin main
+git clone https://github.com/codegraphtheory/hermes-profile-template.git
+cd hermes-profile-template
+cp templates/profile.params.yaml /tmp/my-profile.params.yaml
 ```
 
-Users can then install it with:
+Edit `/tmp/my-profile.params.yaml`, then generate:
 
 ```bash
-hermes profile install github.com/YOUR_ORG/security-reviewer --alias
-```
+python3 scripts/generate_profile.py \
+  --params /tmp/my-profile.params.yaml \
+  --output ../my-profile
 
-## What makes a good Hermes profile
-
-A strong profile has four layers:
-
-1. Identity: `SOUL.md` explains how the agent thinks, what it refuses, and what quality means.
-2. Capabilities: `config.yaml`, `skills/`, `mcp.json`, and cron jobs define what the agent can actually do.
-3. Operating contract: `AGENTS.md` tells AI coding agents how to maintain the profile without breaking it.
-4. Distribution manifest: `distribution.yaml` makes the profile installable and updateable with Hermes.
-
-## Quality gates
-
-Run this before every commit:
-
-```bash
+cd ../my-profile
 python3 scripts/validate_profile.py .
 ```
 
-The validator checks:
+This is the best path when you want reproducible profile creation. The params file becomes the source of truth for the starter profile.
 
-- Required files exist.
-- YAML and JSON parse cleanly.
-- `distribution.yaml` has required fields.
-- Required env vars are documented in `.env.EXAMPLE`.
-- Skills have valid frontmatter.
-- No common secret patterns appear in tracked template files.
-- No broken symlinks.
-- No unresolved template placeholders remain outside `templates/`.
+## Option 4: Install this repo as an interactive profile builder
 
-## Authoring workflow with AI
-
-Use this prompt inside Hermes, Claude Code, Codex, or another coding agent:
-
-```text
-You are helping me build a Hermes Agent profile distribution. Read AGENTS.md first. Then inspect distribution.yaml, SOUL.md, config.yaml, skills/, scripts/, and templates/. Improve the profile for a focused use case. Run python3 scripts/validate_profile.py . before finishing. Do not add secrets. Do not modify user-owned runtime files. Keep the distribution installable with hermes profile install.
-```
-
-## Installed interactive workflow
-
-This repository can itself be installed as a Hermes profile that helps create other profiles:
+Install the template itself as a Hermes profile:
 
 ```bash
-hermes profile install github.com/codegraphtheory/hermes-profile-template --name profile-architect --alias
+hermes profile install github.com/codegraphtheory/hermes-profile-template \
+  --name profile-architect \
+  --alias
+
 profile-architect chat
 ```
 
-Then ask:
+Then ask it to create a profile:
 
 ```text
 Create a Hermes profile for a database migration reviewer. It should inspect SQL diffs, flag destructive migrations, and generate rollback checklists.
 ```
 
-The installed profile keeps `scripts/` and `templates/`, so it can write a params YAML file, run `scripts/generate_profile.py`, validate the generated profile, and give you the output path.
+The installed profile will use the included generator, write a starter profile, and run validation.
 
-## Distribution safety model
+## Validate before publishing
 
-This template follows the Hermes profile distribution model:
+Run this from the profile repository root:
 
-- Distribution-owned: `SOUL.md`, `config.yaml`, `mcp.json`, `skills/`, `templates/`, `scripts/`, `distribution.yaml`.
-- User-owned: `.env`, `auth.json`, `memories/`, `sessions/`, `state.db*`, `logs/`, `workspace/`, `plans/`, `local/`.
-- `.env.EXAMPLE` is safe to commit. `.env` is not.
+```bash
+python3 scripts/validate_profile.py .
+```
 
-## Recommended release checklist
+The validator checks required files, YAML and JSON syntax, the Hermes distribution manifest, environment variable documentation, skill frontmatter, common secret patterns, broken symlinks, and unresolved template placeholders.
 
-- [ ] `python3 scripts/validate_profile.py .` passes.
-- [ ] `hermes profile install . --name smoke-test --yes` succeeds in a temporary Hermes home.
-- [ ] A real chat session confirms the profile loads expected instructions.
-- [ ] README explains install, env vars, and intended use.
-- [ ] Version in `distribution.yaml` is bumped.
-- [ ] A git tag is created for reproducible installs.
+## Publish a generated profile
+
+From the generated profile directory:
+
+```bash
+git init -b main
+git add .
+git commit -m "feat: initial profile"
+git remote add origin git@github.com:YOUR_ORG/YOUR_PROFILE_REPO.git
+git push -u origin main
+```
+
+Users can install it with:
+
+```bash
+hermes profile install github.com/YOUR_ORG/YOUR_PROFILE_REPO --alias
+```
+
+## What to customize
+
+Most users should start with these files:
+
+- `SOUL.md`: the profile's identity, mission, boundaries, and output style.
+- `distribution.yaml`: name, version, description, env vars, and distribution-owned files.
+- `config.yaml`: model, toolsets, terminal behavior, memory, security, and approval defaults.
+- `.env.EXAMPLE`: documented environment variables with placeholder values only.
+- `skills/`: bundled reusable procedures the profile can load.
+- `AGENTS.md`: instructions for AI coding agents that maintain the profile repository.
+
+Never commit `.env`, API keys, OAuth tokens, credentials, memories, sessions, logs, runtime databases, or private user data.
 
 ## License
 
