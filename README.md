@@ -262,14 +262,42 @@ hermes profile install . --name migration-reviewer-local --yes
 
 This is the best path after the first prompt-generated draft. Commit the params file so the repo can be regenerated later.
 
-### Path 6: Use GitHub's template button
+### Path 6: Use the beginner-friendly wizard
+
+Run the wizard when you want guided prompts for the profile name, mission, target users, toolsets, environment variable names, bundled skills, safety boundaries, and output directory:
+
+```bash
+python3 scripts/profile_wizard.py --params-output /tmp/my-profile.params.yaml
+```
+
+For CI or repeatable smoke tests, pass flags and generate the profile in one command:
+
+```bash
+python3 scripts/profile_wizard.py \
+  --non-interactive \
+  --name database-migration-reviewer \
+  --display-name "Database Migration Reviewer" \
+  --description "Reviews SQL migrations for rollback risk and unsafe data changes." \
+  --target-user "backend engineers" \
+  --toolset file,terminal,skills \
+  --env GITHUB_TOKEN:"Optional token for repository metadata checks":optional \
+  --safety-boundary "Do not execute production migrations." \
+  --params-output /tmp/database-migration-reviewer.params.yaml \
+  --profile-output /tmp/database-migration-reviewer \
+  --generate \
+  --force
+```
+
+The wizard records only environment variable names and descriptions. Do not enter real API keys or secrets.
+
+### Path 7: Use GitHub's template button
 
 Use this when you want a new repository that GitHub marks as generated from this template.
 
 1. Open `https://github.com/codegraphtheory/hermes-profile-template`.
 2. Click `Use this template`.
 3. Clone your new repo.
-4. Replace the starter profile with either Path 1, Path 3, or Path 4 output.
+4. Replace the starter profile with either Path 1, Path 3, Path 4, Path 5, or Path 6 output.
 5. Run validation and smoke install.
 
 ```bash
