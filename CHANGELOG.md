@@ -2,6 +2,15 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.0
+
+- Added `scripts/generate_from_sentence.py`, a deterministic local backend entrypoint that turns one sentence into an installable Hermes profile repo.
+- Added generated demo artifacts: `demo/index.html`, `docs/playable-demo.md`, `docs/output-diagram.svg`, and `docs/validation-report.md`.
+- Added safe zip packaging for generated profile downloads.
+- Added `web-demo/server.py` and a static local webpage that submits generation jobs and displays download, demo, diagram, prompt, and validation links.
+- Added `make sentence-smoke` and `make web-demo` shortcuts.
+- Documented the local web demo and the one-sentence generation path.
+
 ## 0.5.0
 
 - Added a bundled `prompt-engineering` skill that expands a simple profile idea into a mature Hermes profile prompt and generation brief.

@@ -1,4 +1,4 @@
-description: Prompt-to-repo authoring system that expands simple ideas into mature prompts and installable Hermes Agent profile distributions.
+description: Prompt-to-repo authoring system with one-sentence generation, demo assets, diagrams, and installable Hermes Agent profile distributions.
 homepage: https://github.com/codegraphtheory/hermes-profile-template
 topics:
   - agent-profile

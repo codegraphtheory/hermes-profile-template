@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hermes Profile Generator Demo</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <p class="eyebrow">Hermes Profile Template</p>
+      <h1>Turn one sentence into an installable Hermes profile repo.</h1>
+      <p class="lede">Type an idea. The local backend expands it into a mature profile prompt, generates a validated Hermes profile distribution, renders a playable demo, draws a contents diagram, and packages a downloadable zip.</p>
+      <div class="panel">
+        <label for="sentence">Profile idea</label>
+        <textarea id="sentence" maxlength="1000" rows="4">a database migration reviewer</textarea>
+        <div class="actions">
+          <button id="generate">Generate profile</button>
+          <button id="sample" class="secondary">Try support ticket sample</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="status panel" id="statusPanel" hidden>
+      <h2>Status</h2>
+      <ol id="progress"></ol>
+      <pre id="error" hidden></pre>
+    </section>
+
+    <section class="results" id="results" hidden>
+      <div class="result-card">
+        <h2 id="profileTitle">Generated profile</h2>
+        <p id="profilePath"></p>
+        <code id="installCommand"></code>
+      </div>
+      <div class="grid">
+        <a id="downloadZip" class="artifact" href="#">Download repo zip</a>
+        <a id="playDemo" class="artifact" href="#" target="_blank">Play demo</a>
+        <a id="viewDiagram" class="artifact" href="#" target="_blank">View diagram</a>
+        <a id="viewPrompt" class="artifact" href="#" target="_blank">View mature prompt</a>
+        <a id="viewValidation" class="artifact" href="#" target="_blank">View validation report</a>
+      </div>
+      <iframe id="diagramFrame" title="Profile diagram"></iframe>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

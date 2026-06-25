@@ -93,6 +93,31 @@ docs/profile-prompt.md          Mature prompt preserved from the user's simple i
 
 The generated repo is not just a text draft. It should validate locally and install through Hermes.
 
+## Local web demo
+
+Run a local webpage that wraps `scripts/generate_from_sentence.py`:
+
+```bash
+make web-demo
+```
+
+Then open:
+
+```text
+http://127.0.0.1:8765
+```
+
+The page lets someone type a sentence, then the backend creates:
+
+- downloadable profile repo zip
+- `docs/profile-prompt.md`
+- `docs/output-diagram.svg`
+- `demo/index.html`
+- `docs/playable-demo.md`
+- `docs/validation-report.md`
+
+The local API is intentionally simple and demo-focused. It runs jobs under `/tmp/hermes-profile-web-demo-jobs` and uses only local files. Do not expose it directly to the public internet without adding authentication, quotas, sandboxing, and abuse controls.
+
 ## Usage paths
 
 Every path below ends in the same contract: a directory that passes validation and can be installed with `hermes profile install`.
@@ -172,7 +197,25 @@ python3 scripts/validate_profile.py .
 hermes profile install . --name migration-reviewer-demo --yes --force
 ```
 
-### Path 3: Direct generation from command-line flags
+### Path 3: One-sentence deterministic generation with demo assets
+
+Use this when you want the web-demo backend behavior from the terminal without opening the browser.
+
+```bash
+python3 scripts/generate_from_sentence.py \
+  --sentence "a database migration reviewer" \
+  --output /tmp/database-migration-reviewer \
+  --force
+
+cd /tmp/database-migration-reviewer
+python3 scripts/validate_profile.py .
+open demo/index.html
+open docs/output-diagram.svg
+```
+
+This path creates the profile repo, mature prompt, playable demo, SVG diagram, validation report, and a downloadable zip artifact under the output parent `artifacts/` directory.
+
+### Path 4: Direct generation from command-line flags
 
 Use this when you already know the profile name and one-sentence purpose.
 
@@ -194,7 +237,7 @@ hermes profile install . --name security-reviewer-local --yes
 
 This path is deterministic and quick, but less expressive than the installed `profile-architect` prompt workflow.
 
-### Path 4: Deterministic generation from a params file
+### Path 5: Deterministic generation from a params file
 
 Use this when you want reproducible profile generation, code review, or repeatable builds.
 
@@ -217,7 +260,7 @@ hermes profile install . --name migration-reviewer-local --yes
 
 This is the best path after the first prompt-generated draft. Commit the params file so the repo can be regenerated later.
 
-### Path 5: Use GitHub's template button
+### Path 6: Use GitHub's template button
 
 Use this when you want a new repository that GitHub marks as generated from this template.
 
