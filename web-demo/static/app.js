@@ -15,11 +15,16 @@ const results = document.querySelector('#results');
 const profileTitle = document.querySelector('#profileTitle');
 const profilePath = document.querySelector('#profilePath');
 const installCommand = document.querySelector('#installCommand');
+const qualityPill = document.querySelector('#qualityPill');
+const qualityChecks = document.querySelector('#qualityChecks');
+const generatedFiles = document.querySelector('#generatedFiles');
 const downloadZip = document.querySelector('#downloadZip');
 const playDemo = document.querySelector('#playDemo');
+const openDemoInline = document.querySelector('#openDemoInline');
 const viewDiagram = document.querySelector('#viewDiagram');
 const viewPrompt = document.querySelector('#viewPrompt');
 const viewValidation = document.querySelector('#viewValidation');
+const demoFrame = document.querySelector('#demoFrame');
 const diagramFrame = document.querySelector('#diagramFrame');
 
 const STAGES = [
@@ -196,11 +201,24 @@ function renderResults(result) {
   profileTitle.textContent = result.display_name;
   profilePath.textContent = result.profile_dir;
   installCommand.textContent = result.install_command;
+  qualityPill.textContent = result.quality_summary || 'Validated';
+  qualityChecks.innerHTML = (result.quality_checks || []).map(check => `
+    <div class="quality-check">
+      <b>✓</b>
+      <span>${escapeHtml(check)}</span>
+    </div>`).join('');
+  generatedFiles.innerHTML = (result.generated_files || []).map(file => `
+    <div class="file-row">
+      <span>${escapeHtml(file.path || file)}</span>
+      <small>${escapeHtml(file.role || '')}</small>
+    </div>`).join('');
   downloadZip.href = result.zip_url;
   playDemo.href = result.demo_url;
+  openDemoInline.href = result.demo_url;
   viewDiagram.href = result.diagram_url;
   viewPrompt.href = result.prompt_url;
   viewValidation.href = result.validation_url;
+  demoFrame.src = result.demo_url;
   diagramFrame.src = result.diagram_url;
   results.hidden = false;
 }

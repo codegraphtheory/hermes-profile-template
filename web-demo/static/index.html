@@ -44,22 +44,51 @@
         <div class="panel-grid" id="panelGrid"></div>
 
         <section class="results" id="results" hidden>
-          <div class="result-card panel">
+          <div class="results-header panel">
             <div>
               <span>Generated profile</span>
               <h2 id="profileTitle">Generated profile</h2>
               <p id="profilePath"></p>
             </div>
-            <code id="installCommand"></code>
+            <div class="quality-pill" id="qualityPill">Validated</div>
           </div>
-          <div class="artifact-grid">
-            <a id="downloadZip" class="artifact" href="#">Download repo zip</a>
-            <a id="playDemo" class="artifact" href="#" target="_blank">Play demo</a>
-            <a id="viewDiagram" class="artifact" href="#" target="_blank">View diagram</a>
-            <a id="viewPrompt" class="artifact" href="#" target="_blank">View mature prompt</a>
-            <a id="viewValidation" class="artifact" href="#" target="_blank">Validation report</a>
+
+          <div class="result-layout">
+            <section class="panel result-column">
+              <span>What was generated</span>
+              <div id="qualityChecks" class="quality-list"></div>
+              <div class="file-list" id="generatedFiles"></div>
+              <code id="installCommand"></code>
+              <div class="artifact-grid">
+                <a id="downloadZip" class="artifact primary" href="#">Download zip</a>
+                <a id="viewPrompt" class="artifact" href="#" target="_blank">Mature prompt</a>
+                <a id="viewValidation" class="artifact" href="#" target="_blank">Validation</a>
+                <a id="viewDiagram" class="artifact" href="#" target="_blank">Diagram</a>
+                <a id="playDemo" class="artifact" href="#" target="_blank">Open demo</a>
+              </div>
+            </section>
+
+            <section class="panel live-demo">
+              <div class="live-demo-header">
+                <div>
+                  <span>Playable demo</span>
+                  <h2>See the generated agent in action</h2>
+                </div>
+                <a id="openDemoInline" class="ghost-link" href="#" target="_blank">Open full page</a>
+              </div>
+              <iframe id="demoFrame" title="Playable generated profile demo"></iframe>
+            </section>
           </div>
-          <iframe id="diagramFrame" title="Profile contents diagram"></iframe>
+
+          <section class="panel diagram-card">
+            <div class="live-demo-header">
+              <div>
+                <span>Output contents</span>
+                <h2>Generated profile map</h2>
+              </div>
+            </div>
+            <iframe id="diagramFrame" title="Profile contents diagram"></iframe>
+          </section>
         </section>
 
         <pre id="error" hidden></pre>

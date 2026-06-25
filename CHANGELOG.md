@@ -2,6 +2,13 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.2
+
+- Fixed local web demo layout collisions by separating the prompt pane, status rail, and detail workbench columns.
+- Added an embedded playable demo iframe directly in the result window.
+- Added a clearer generated-output summary with quality checks, important files, install command, and artifact links.
+- Exposed generated file metadata and validation-quality signals from the local backend result payload.
+
 ## 0.6.1
 
 - Redesigned the local web demo into a fixed fullscreen windowpane experience.
