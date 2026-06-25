@@ -2,6 +2,12 @@
 
 Thanks for improving this Hermes profile distribution.
 
+## Etiquette
+
+1. In order to accomodate the maximum number of first-time contributors, please limit yourself to ONE `help-wanted` or `bounty` issue at a time.
+2. Agent PRs are welcomed and accepted as long as they are high quality.
+3. Please fork and star the repo prior to raising a pull request.
+
 ## Development loop
 
 1. Inspect the current repository state.
