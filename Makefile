@@ -1,4 +1,4 @@
-.PHONY: deps validate compile generate-smoke smoke release-check clean
+.PHONY: deps validate compile generate-smoke smoke scorecard test release-check clean
 
 PYTHON ?= python3
 BASE ?= origin/main
@@ -9,6 +9,7 @@ deps:
 
 validate:
 	$(PYTHON) scripts/validate_profile.py .
+	$(PYTHON) -m unittest discover -s tests -p "test_*.py"
 
 compile:
 	PYTHONDONTWRITEBYTECODE=1 $(PYTHON) -m py_compile scripts/*.py
@@ -20,6 +21,12 @@ generate-smoke:
 
 smoke:
 	scripts/smoke_install.sh
+
+scorecard:
+	$(PYTHON) scripts/scorecard.py
+
+test:
+	$(PYTHON) -m unittest discover -s tests -p "test_*.py"
 
 release-check:
 	$(PYTHON) scripts/release_readiness.py --base $(BASE)

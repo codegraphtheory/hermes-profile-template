@@ -153,6 +153,60 @@ make smoke
 
 The smoke script validates the repository, compiles Python scripts without writing bytecode, generates and validates a profile from `templates/profile.params.yaml`, and installs into a temporary `HERMES_HOME` when the Hermes CLI is available. If you do not use `make`, run `python3 scripts/validate_profile.py .` and `scripts/smoke_install.sh` directly.
 
+## Profile Quality Scorecard
+
+In addition to structural validation, this repository includes a profile quality scorecard that reports release readiness and search/organic discovery alignment.
+
+To generate a scorecard report for your repository:
+
+```bash
+make scorecard
+```
+
+Or execute the script directly:
+
+```bash
+python3 scripts/scorecard.py [path/to/profile]
+```
+
+### Checks & Deductions
+
+The scorecard starts at `100` points and evaluates the repository against 12 criteria grouped by severity:
+
+| Check | Severity | Description | Deduction |
+| :--- | :--- | :--- | :--- |
+| **Required Root Files Presence** | `FAIL` | Checks for mandatory files (`distribution.yaml`, `SOUL.md`, etc.). | `-15` |
+| **Manifest Structure & Fields** | `FAIL` | Validates `distribution.yaml` format and fields. | `-15` |
+| **Environment Variables in Example** | `FAIL` | Ensures `env_requires` variables exist in `.env.EXAMPLE`. | `-15` |
+| **No Committed Runtime/Cache Files** | `FAIL` | Checks that no temporary, cache, or user database files are tracked. | `-15` |
+| **No Exposed API Keys or Secrets** | `FAIL` | Checks for standard API keys or secret structures. | `-15` |
+| **Skill Markdown Frontmatter** | `FAIL` | Checks that skill files under `skills/` contain valid frontmatter. | `-15` |
+| **Python Script Syntax** | `FAIL` | Compiles Python scripts in-memory to catch syntax errors. | `-15` |
+| **License File Presence** | `WARN` | Checks that a `LICENSE` file or metadata field exists. | `-5` |
+| **Install Command in README** | `WARN` | Verifies installation instructions are documented. | `-5` |
+| **GitHub Topic Metadata** | `WARN` | Verifies repository topic suggestions exist. | `-5` |
+| **Changelog Version Consistency** | `WARN` | Verifies `CHANGELOG.md` matches the current version. | `-5` |
+| **Smoke Testing Documentation** | `WARN` | Checks that smoke test instructions are in the README. | `-5` |
+
+### Output Formats
+
+- **Console/Terminal (Default)**: Visual output with colored status labels.
+- **JSON (`--json`)**: Deterministic and structured output for integrations:
+  ```bash
+  python3 scripts/scorecard.py --json
+  ```
+- **Markdown (`--markdown`)**: A formatted table suitable for pull request comments or release summaries:
+  ```bash
+  python3 scripts/scorecard.py --markdown
+  ```
+
+### Exit Codes
+
+- `0`: Scorecard passed with all checks OK, or with advisory warnings (`WARN`) only.
+- `1`: Scorecard failed due to one or more hard/critical errors (`FAIL`).
+- `2`: Command execution error (e.g., path does not exist).
+
+
 
 ## Release discipline
 

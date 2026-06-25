@@ -19,5 +19,7 @@ jobs:
         run: make compile
       - name: Validate repository profile distribution
         run: make validate
+      - name: Run profile quality scorecard
+        run: python3 scripts/scorecard.py
       - name: Smoke-test install path
         run: make smoke
