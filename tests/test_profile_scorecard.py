@@ -88,6 +88,7 @@ class ProfileScorecardTest(unittest.TestCase):
             make_profile(root)
             scorecard = profile_scorecard.build_scorecard(root)
         self.assertEqual(scorecard["summary"]["status"], "pass")
+        self.assertEqual(scorecard["summary"]["score"], 100)
         self.assertEqual(scorecard["summary"]["hard_failures"], 0)
         self.assertEqual(scorecard["summary"]["warnings"], 0)
         self.assertEqual(profile_scorecard.exit_code(scorecard), 0)
@@ -98,6 +99,7 @@ class ProfileScorecardTest(unittest.TestCase):
             make_profile(root, readme_install=False)
             scorecard = profile_scorecard.build_scorecard(root)
         self.assertEqual(scorecard["summary"]["status"], "pass")
+        self.assertLess(scorecard["summary"]["score"], 100)
         self.assertEqual(scorecard["summary"]["hard_failures"], 0)
         self.assertGreaterEqual(scorecard["summary"]["warnings"], 1)
         self.assertEqual(profile_scorecard.exit_code(scorecard), 0)
@@ -109,6 +111,7 @@ class ProfileScorecardTest(unittest.TestCase):
             (root / "SOUL.md").unlink()
             scorecard = profile_scorecard.build_scorecard(root)
         self.assertEqual(scorecard["summary"]["status"], "fail")
+        self.assertLess(scorecard["summary"]["score"], 100)
         self.assertEqual(profile_scorecard.exit_code(scorecard), 1)
         self.assertIn("Missing required file: SOUL.md", scorecard["checks"][0]["details"])
 
@@ -138,7 +141,9 @@ class ProfileScorecardTest(unittest.TestCase):
             first = profile_scorecard.render_json(scorecard)
             second = profile_scorecard.render_json(scorecard)
         self.assertEqual(first, second)
-        self.assertEqual(json.loads(first)["schema_version"], profile_scorecard.SCHEMA_VERSION)
+        data = json.loads(first)
+        self.assertEqual(data["schema_version"], profile_scorecard.SCHEMA_VERSION)
+        self.assertEqual(data["summary"]["score"], 100)
 
     def test_markdown_output_contains_summary_table(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -146,6 +151,7 @@ class ProfileScorecardTest(unittest.TestCase):
             make_profile(root, readme_install=False)
             markdown = profile_scorecard.render_markdown(profile_scorecard.build_scorecard(root))
         self.assertIn("# Hermes Profile Scorecard", markdown)
+        self.assertIn("- Score:", markdown)
         self.assertIn("| warning | advisory | README install command |", markdown)
 
 

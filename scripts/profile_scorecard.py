@@ -280,11 +280,13 @@ def build_scorecard(root: Path) -> dict[str, Any]:
     hard_failures = [check for check in checks if check["severity"] == "required" and check["status"] == "fail"]
     warnings = [check for check in checks if check["status"] == "warning"]
     passes = [check for check in checks if check["status"] == "pass"]
+    score = round((len(passes) / len(checks)) * 100) if checks else 0
     return {
         "schema_version": SCHEMA_VERSION,
         "profile": profile_summary(manifest),
         "summary": {
             "status": "fail" if hard_failures else "pass",
+            "score": score,
             "total_checks": len(checks),
             "passed": len(passes),
             "warnings": len(warnings),
@@ -306,6 +308,7 @@ def render_terminal(scorecard: dict[str, Any]) -> str:
         f"Hermes profile scorecard: {profile.get('name') or '(unknown profile)'}",
         f"Version: {profile.get('version') or '(unknown)'}",
         f"Status: {summary['status'].upper()}",
+        f"Score: {summary['score']}/100",
         f"Checks: {summary['passed']} passed, {summary['warnings']} warnings, {summary['hard_failures']} hard failures",
         "",
     ]
@@ -328,6 +331,7 @@ def render_markdown(scorecard: dict[str, Any]) -> str:
         f"- Profile: `{profile.get('name') or 'unknown'}`",
         f"- Version: `{profile.get('version') or 'unknown'}`",
         f"- Status: **{summary['status'].upper()}**",
+        f"- Score: **{summary['score']}/100**",
         f"- Checks: {summary['passed']} passed, {summary['warnings']} warnings, {summary['hard_failures']} hard failures",
         "",
         "| Status | Severity | Check | Message |",

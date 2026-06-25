@@ -274,6 +274,7 @@ The scorecard keeps hard validation failures separate from advisory warnings. It
   },
   "summary": {
     "status": "pass",
+    "score": 100,
     "total_checks": 8,
     "passed": 8,
     "warnings": 0,
