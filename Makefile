@@ -1,4 +1,4 @@
-.PHONY: deps validate compile generate-smoke sentence-smoke smoke web-demo release-check clean
+.PHONY: deps validate scorecard compile generate-smoke sentence-smoke smoke web-demo release-check test clean
 
 PYTHON ?= python3
 BASE ?= origin/main
@@ -9,6 +9,12 @@ deps:
 
 validate:
 	$(PYTHON) scripts/validate_profile.py .
+
+scorecard:
+	$(PYTHON) scripts/profile_scorecard.py .
+
+test:
+	$(PYTHON) -m pytest tests/ -v
 
 compile:
 	PYTHONDONTWRITEBYTECODE=1 $(PYTHON) -m py_compile scripts/*.py

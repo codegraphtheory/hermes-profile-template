@@ -282,6 +282,26 @@ hermes profile install . --name your-profile-local --yes
 
 GitHub native template lineage only exists when the repository is created through the template flow. For generated repos created another way, this template records explicit lineage in `distribution.yaml`, `.github/template-source.yml`, and README text.
 
+## Quality scorecard
+
+The scorecard gives a richer quality signal beyond hard pass/fail validation. It checks readability, discoverability, and completeness across ten dimensions and produces terminal, JSON, or Markdown output.
+
+```bash
+# Human-readable terminal output
+python3 scripts/profile_scorecard.py .
+
+# Machine-readable JSON (for CI and tooling)
+python3 scripts/profile_scorecard.py . --json
+
+# Markdown summary (for PR comments or README snippets)
+python3 scripts/profile_scorecard.py . --markdown
+
+# Via make
+make scorecard
+```
+
+The scorecard exits nonzero only for hard failures. Advisory warnings are reported but do not block CI.
+
 ## Validation contract
 
 Before calling a profile repo done, run:
@@ -294,6 +314,7 @@ For this template repo, run the full local gate:
 
 ```bash
 make validate
+make scorecard
 make smoke
 ```
 
