@@ -317,6 +317,16 @@ Users can install the published profile with:
 hermes profile install github.com/YOUR_ORG/YOUR_PROFILE_REPO --alias
 ```
 
+## Record safe demos
+
+Use the demo kit when you need to record scaffold, validation, or install walkthroughs without exposing local secrets:
+
+```bash
+python3 scripts/demo_fixture.py . --demo generate
+```
+
+See [`docs/demos/`](docs/demos/) for copy-pasteable commands, narration notes, and the redaction checklist.
+
 ## Make the profile discoverable
 
 Before publishing, make the generated repo easy to find and evaluate:
