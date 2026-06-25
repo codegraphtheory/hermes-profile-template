@@ -153,6 +153,9 @@ make smoke
 
 The smoke script validates the repository, compiles Python scripts without writing bytecode, generates and validates a profile from `templates/profile.params.yaml`, and installs into a temporary `HERMES_HOME` when the Hermes CLI is available. If you do not use `make`, run `python3 scripts/validate_profile.py .` and `scripts/smoke_install.sh` directly.
 
+For a guide on how to safely record and verify terminal demonstrations without exposing credentials or filesystem paths, see the [Terminal Demo Kit](docs/demos/README.md).
+
+
 
 ## Release discipline
 

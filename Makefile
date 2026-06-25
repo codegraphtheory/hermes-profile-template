@@ -1,4 +1,4 @@
-.PHONY: deps validate compile generate-smoke smoke release-check clean
+.PHONY: deps validate compile generate-smoke smoke release-check clean smoke-demo
 
 PYTHON ?= python3
 BASE ?= origin/main
@@ -20,6 +20,10 @@ generate-smoke:
 
 smoke:
 	scripts/smoke_install.sh
+	bash scripts/smoke_demo.sh
+
+smoke-demo:
+	bash scripts/smoke_demo.sh
 
 release-check:
 	$(PYTHON) scripts/release_readiness.py --base $(BASE)
