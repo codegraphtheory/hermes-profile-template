@@ -1,0 +1,50 @@
+# Hermes Profile Validation Workflow
+# Copy this file to .github/workflows/validate.yml in your profile repo.
+#
+# Usage:
+#   1. Copy this file to .github/workflows/validate.yml
+#   2. Ensure requirements.txt includes pyyaml
+#   3. Ensure scripts/validate_profile.py exists (from hermes-profile-template)
+#   4. Push — validation runs on every PR and push to main
+#
+# To use the reusable workflow from hermes-profile-template instead,
+# see: https://github.com/codegraphtheory/hermes-profile-template
+
+name: Validate Hermes Profile
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Compile Python files
+        run: |
+          python -m compileall -q scripts/ || true
+
+      - name: Validate profile distribution
+        run: python scripts/validate_profile.py .
+
+      - name: Quality scorecard
+        run: |
+          python scripts/scorecard.py . --markdown >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Smoke test
+        run: |
+          if [ -f Makefile ] && grep -q "^smoke:" Makefile; then
+            make smoke
+          else
+            echo "No smoke target — skipping"
+          fi

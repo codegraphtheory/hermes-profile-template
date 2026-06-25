@@ -1,0 +1,48 @@
+name: Validate Profile Distribution
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: 'Python version to use'
+        required: false
+        default: '3.11'
+      run-smoke:
+        description: 'Run install smoke test'
+        required: false
+        default: true
+        type: boolean
+      scorecard:
+        description: 'Run quality scorecard'
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Compile Python files
+        run: make compile
+
+      - name: Validate profile distribution
+        run: make validate
+
+      - name: Quality scorecard
+        if: ${{ inputs.scorecard }}
+        run: python scripts/scorecard.py . --markdown >> "$G_STEP_SUMMARY" || true
+        env:
+          G_STEP_SUMMARY: ${{ github.step_summary }}
+
+      - name: Install smoke test
+        if: ${{ inputs.run-smoke }}
+        run: make smoke
