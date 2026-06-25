@@ -1,0 +1,113 @@
+name: Reusable Hermes Profile Validation
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: "Python version to use for validation"
+        required: false
+        type: string
+        default: "3.11"
+      run-smoke-test:
+        description: "Whether to run the local installation smoke test"
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  validate:
+    name: Validate Profile
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Install dependencies
+        run: |
+          echo "=== Installing dependencies ==="
+          if [ -f requirements.txt ]; then
+            python -m pip install --upgrade pip
+            python -m pip install -r requirements.txt || {
+              echo "::error::Failed to install dependencies from requirements.txt. Please verify your dependencies."
+              exit 1
+            }
+          else
+            echo "requirements.txt not found, installing fallback dependencies..."
+            python -m pip install --upgrade pip
+            python -m pip install pyyaml || {
+              echo "::error::Failed to install fallback dependencies (PyYAML)."
+              exit 1
+            }
+          fi
+
+      - name: Python compile checks
+        run: |
+          echo "=== Running Python compilation checks ==="
+          if ls scripts/*.py 1>/dev/null 2>&1; then
+            python3 -m py_compile scripts/*.py || {
+              echo "::error::Python compilation failed! One or more scripts in the 'scripts/' directory contain syntax errors."
+              exit 1
+            }
+          else
+            echo "No python scripts found under scripts/ to compile."
+          fi
+
+      - name: Profile validation
+        run: |
+          echo "=== Running profile validation ==="
+          if [ -f scripts/validate_profile.py ]; then
+            python3 scripts/validate_profile.py . || {
+              echo "::error::Hermes profile validation failed! Please check scripts/validate_profile.py output above for specific errors."
+              exit 1
+            }
+          elif [ -f Makefile ] && grep -q "validate:" Makefile; then
+            make validate || {
+              echo "::error::Profile validation via Makefile failed! Please check output above."
+              exit 1
+            }
+          else
+            echo "::error::Neither scripts/validate_profile.py nor make validate target found. Profile validation could not be executed."
+            exit 1
+          fi
+
+      - name: Generator smoke test
+        run: |
+          echo "=== Running generator smoke test ==="
+          if [ -f scripts/generate_profile.py ] && [ -f templates/profile.params.yaml ]; then
+            python3 scripts/generate_profile.py --params templates/profile.params.yaml --output /tmp/gen-smoke --force || {
+              echo "::error::Generator smoke test failed to compile the profile from templates/profile.params.yaml. Run scripts/generate_profile.py locally to troubleshoot."
+              exit 1
+            }
+            if [ -f /tmp/gen-smoke/scripts/validate_profile.py ]; then
+              python3 /tmp/gen-smoke/scripts/validate_profile.py /tmp/gen-smoke || {
+                echo "::error::The generated profile failed validation checks. Please review the template structure and default parameters."
+                exit 1
+              }
+            fi
+            echo "Generator smoke test passed successfully."
+          else
+            echo "Generator scripts/generate_profile.py or templates/profile.params.yaml not found. Skipping generator smoke test."
+          fi
+
+      - name: Installation smoke test
+        if: ${{ inputs.run-smoke-test }}
+        run: |
+          echo "=== Running installation smoke test ==="
+          if [ -f scripts/smoke_install.sh ]; then
+            bash scripts/smoke_install.sh || {
+              echo "::error::Installation smoke test failed! Please check scripts/smoke_install.sh logs above."
+              exit 1
+            }
+          elif [ -f Makefile ] && grep -q "smoke:" Makefile; then
+            make smoke || {
+              echo "::error::Installation smoke test via Makefile failed! Please check output logs above."
+              exit 1
+            }
+          else
+            echo "No installation smoke scripts found. If the Hermes CLI is not available, this is expected for external profiles. Skipping."
+          fi

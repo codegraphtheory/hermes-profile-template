@@ -153,6 +153,34 @@ make smoke
 
 The smoke script validates the repository, compiles Python scripts without writing bytecode, generates and validates a profile from `templates/profile.params.yaml`, and installs into a temporary `HERMES_HOME` when the Hermes CLI is available. If you do not use `make`, run `python3 scripts/validate_profile.py .` and `scripts/smoke_install.sh` directly.
 
+### CI Validation with GitHub Actions
+
+This template includes a reusable GitHub Actions validation workflow to keep your profile healthy. The workflow:
+- Installs Python and dependencies.
+- Runs Python compilation and syntax checks.
+- Validates the profile structure and metadata.
+- Executes smoke tests for generation and installation.
+
+By default, when you template or generate a repository, the caller workflow file `.github/workflows/validate.yml` is automatically copied. It references the reusable workflow local to your repository:
+
+```yaml
+name: Validate Hermes Profile Template
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    uses: ./.github/workflows/validate-profile.yml
+    with:
+      python-version: "3.11"
+      run-smoke-test: true
+```
+
+You can customize the Python version or turn off the installation smoke test by adjusting inputs.
+
 
 ## Release discipline
 

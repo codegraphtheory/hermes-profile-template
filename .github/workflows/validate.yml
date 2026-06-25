@@ -7,17 +7,7 @@ on:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.11"
-      - name: Install validation dependencies
-        run: python -m pip install -r requirements.txt
-      - name: Compile scripts
-        run: make compile
-      - name: Validate repository profile distribution
-        run: make validate
-      - name: Smoke-test install path
-        run: make smoke
+    uses: ./.github/workflows/validate-profile.yml
+    with:
+      python-version: "3.11"
+      run-smoke-test: true
