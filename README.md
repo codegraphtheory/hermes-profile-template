@@ -239,15 +239,30 @@ GitHub native template lineage only exists when the repository is created throug
 
 ## Validation contract
 
-Before calling a profile repo done, run:
+Before calling a profile repo done, run the validator:
 
 ```bash
 python3 scripts/validate_profile.py .
 ```
 
-For this template repo, run the full local gate:
+To grade the quality, completeness, and security of the profile, run the Quality Scorecard tool:
 
 ```bash
+python3 scripts/profile_scorecard.py .
+```
+
+The scorecard rates the repository out of 100 points based on metadata manifest validity, documentation, security checks, and configuration correctness. It supports terminal text, markdown, and JSON reports:
+
+```bash
+python3 scripts/profile_scorecard.py . --format json
+python3 scripts/profile_scorecard.py . --format markdown
+python3 scripts/profile_scorecard.py . --threshold 80
+```
+
+For this template repo, run the full local validation gate and unit tests:
+
+```bash
+make test
 make validate
 make smoke
 ```
