@@ -2,6 +2,14 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.7.0
+
+- Added an interactive profile design wizard with class-based archetypes and companion bundles.
+- Added `templates/wizard/classes.yaml` for configurable profile classes.
+- Added `templates/wizard/bundles.yaml` for balanced extension presets.
+- Added `scripts/profile_wizard.py` for guided profile params generation.
+- Added README path for wizard-driven profile authoring.
+
 ## 0.6.3
 
 - Added real Hermes LLM calls to the local web demo pipeline: one call expands the sentence into a mature profile prompt, another reviews generated profile quality.
@@ -70,3 +78,4 @@ All notable changes to this Hermes profile distribution are documented here.
 ## 0.1.0
 
 - Initial Hermes profile template with deterministic generation, validation, bundled profile-craft skill, catalog snippets, and installable distribution metadata.
+

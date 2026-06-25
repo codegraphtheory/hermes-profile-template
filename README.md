@@ -239,7 +239,27 @@ hermes profile install . --name security-reviewer-local --yes
 
 This path is deterministic and quick, but less expressive than the installed `profile-architect` prompt workflow.
 
-### Path 5: Deterministic generation from a params file
+### Path 5: Interactive profile design wizard
+
+Use this when you want guided class selection instead of writing prompt prose from scratch. Implements issue #13.
+
+```bash
+python3 scripts/profile_wizard.py
+```
+
+The wizard reads class and bundle definitions from `templates/wizard/classes.yaml` and `templates/wizard/bundles.yaml`, lets you pick an archetype, writes `profile.params.yaml`, and exits. For non-interactive use:
+
+```bash
+python3 scripts/profile_wizard.py --non-interactive
+```
+
+You can then generate from the params file with:
+
+```bash
+python3 scripts/generate_profile.py --params profile.params.yaml --output <target-dir>
+```
+
+### Path 6: Deterministic generation from a params file
 
 Use this when you want reproducible profile generation, code review, or repeatable builds.
 
