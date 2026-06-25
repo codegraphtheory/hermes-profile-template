@@ -1,10 +1,13 @@
 {
   "schema_version": "hermes-profile-examples/v0.1",
+  "schema_docs": "examples/gallery.schema.md",
   "examples": [
     {
       "name": "security-reviewer",
       "path": "examples/security-reviewer",
       "use_case": "Reviews code and architecture changes for application security risk before production.",
+      "template": true,
+      "publish_hint": "Replace YOUR_ORG with the published repository owner before sharing this install command.",
       "install_command": "hermes profile install github.com/YOUR_ORG/security-reviewer --alias",
       "validation_command": "python3 scripts/validate_profile.py examples/security-reviewer",
       "keywords": [
@@ -18,6 +21,8 @@
       "name": "database-migration-reviewer",
       "path": "examples/database-migration-reviewer",
       "use_case": "Reviews SQL migrations for deploy safety, rollback readiness, locks, and data-loss risk.",
+      "template": true,
+      "publish_hint": "Replace YOUR_ORG with the published repository owner before sharing this install command.",
       "install_command": "hermes profile install github.com/YOUR_ORG/database-migration-reviewer --alias",
       "validation_command": "python3 scripts/validate_profile.py examples/database-migration-reviewer",
       "keywords": [
@@ -32,6 +37,8 @@
       "name": "release-manager",
       "path": "examples/release-manager",
       "use_case": "Coordinates release readiness, changelog discipline, smoke validation, and rollout notes.",
+      "template": true,
+      "publish_hint": "Replace YOUR_ORG with the published repository owner before sharing this install command.",
       "install_command": "hermes profile install github.com/YOUR_ORG/release-manager --alias",
       "validation_command": "python3 scripts/validate_profile.py examples/release-manager",
       "keywords": [
@@ -45,6 +52,8 @@
       "name": "research-assistant",
       "path": "examples/research-assistant",
       "use_case": "Builds source-indexed research briefs with uncertainty labels and reusable handoff notes.",
+      "template": true,
+      "publish_hint": "Replace YOUR_ORG with the published repository owner before sharing this install command.",
       "install_command": "hermes profile install github.com/YOUR_ORG/research-assistant --alias",
       "validation_command": "python3 scripts/validate_profile.py examples/research-assistant",
       "keywords": [

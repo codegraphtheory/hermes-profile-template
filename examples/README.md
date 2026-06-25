@@ -13,17 +13,14 @@ Use this gallery to compare profile shapes before creating your own repo from a 
 | [`release-manager`](release-manager/) | Coordinates release readiness, changelog discipline, smoke validation, and rollout notes. | `hermes profile install github.com/YOUR_ORG/release-manager --alias` | release management, CI, changelog, smoke testing |
 | [`research-assistant`](research-assistant/) | Builds source-indexed research briefs with uncertainty labels and reusable handoff notes. | `hermes profile install github.com/YOUR_ORG/research-assistant --alias` | research, knowledge management, documentation, analysis |
 
-Machine-readable gallery metadata is available in [`gallery.json`](gallery.json).
+Machine-readable gallery metadata is available in [`gallery.json`](gallery.json), with field definitions in [`gallery.schema.md`](gallery.schema.md).
 
 ## Validation
 
-Validate each example from the repository root:
+Validate every example from the repository root:
 
 ```bash
-python3 scripts/validate_profile.py examples/security-reviewer
-python3 scripts/validate_profile.py examples/database-migration-reviewer
-python3 scripts/validate_profile.py examples/release-manager
-python3 scripts/validate_profile.py examples/research-assistant
+make validate-examples
 ```
 
 Each example can also run its own local gate:
@@ -40,11 +37,14 @@ The source params used to generate the examples live in [`_source_params/`](_sou
 Regenerate an example after editing its params:
 
 ```bash
+tmpdir="$(mktemp -d)"
 python3 scripts/generate_profile.py \
   --params examples/_source_params/security-reviewer.params.yaml \
-  --output examples/security-reviewer \
-  --force
-cp examples/_source_params/security-reviewer.params.yaml examples/security-reviewer/profile.params.yaml
+  --output "$tmpdir/security-reviewer"
+python3 "$tmpdir/security-reviewer/scripts/validate_profile.py" "$tmpdir/security-reviewer"
+cp examples/_source_params/security-reviewer.params.yaml "$tmpdir/security-reviewer/profile.params.yaml"
+rm -rf examples/security-reviewer
+cp -R "$tmpdir/security-reviewer" examples/security-reviewer
 ```
 
 Never add real credentials, runtime state, local memories, sessions, logs, or private user data to examples.

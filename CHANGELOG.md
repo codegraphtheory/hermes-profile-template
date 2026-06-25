@@ -5,7 +5,8 @@ All notable changes to this Hermes profile distribution are documented here.
 ## 0.6.4
 
 - Added a generated examples gallery with security, database migration, release management, and research assistant profiles.
-- Added source params and searchable gallery metadata for the generated examples.
+- Added source params, schema documentation, and searchable gallery metadata for the generated examples.
+- Added `make validate-examples` as an aggregate gate for curated examples.
 - Linked the examples gallery from the README as repo-scoped discovery and documentation assets.
 
 ## 0.6.3
