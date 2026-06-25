@@ -328,6 +328,25 @@ Before publishing, make the generated repo easy to find and evaluate:
 - Add catalog-native snippets from `templates/catalog/` when submitting to profile catalogs or resource lists.
 - Avoid fake affiliations, fake community links, fake support channels, or claims that are not configured.
 
+Catalog entry templates:
+
+- Use `templates/catalog/flat-profile.md.tmpl` for profile catalogs that store one Markdown file per profile.
+- Use `templates/catalog/manifest-profile.yaml.tmpl` for manifest-driven profile kits.
+- Render ready-to-edit catalog entries from distribution metadata:
+
+```bash
+python3 scripts/render_catalog_entry.py . --format markdown --source-url https://github.com/YOUR_ORG/YOUR_PROFILE_REPO
+python3 scripts/render_catalog_entry.py . --format yaml --source-url https://github.com/YOUR_ORG/YOUR_PROFILE_REPO
+python3 scripts/render_catalog_entry.py . --format resource-line --source-url https://github.com/YOUR_ORG/YOUR_PROFILE_REPO
+python3 scripts/render_catalog_entry.py . --format pr-body --source-url https://github.com/YOUR_ORG/YOUR_PROFILE_REPO
+```
+
+Use `--format all` to preview every supported output. The generated snippets include the install command, source URL, use case, safety constraints, and a reminder to follow each target catalog's contribution rules.
+
+- Keep catalog PRs useful in the target repo format: identity, voice, skills, triggers, constraints, and a standalone install link.
+- Add GitHub topics that cover Hermes, the domain, and installability. Good defaults are `hermes-agent`, `ai-agents`, `agent-profile`, `profile-distribution`, and one or more domain topics.
+- Keep `github-repo-metadata.yaml` current so descriptions, homepage, and topics can be applied repeatably.
+
 Preview metadata changes:
 
 ```bash

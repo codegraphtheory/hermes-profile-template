@@ -1,0 +1,9 @@
+name: security-reviewer
+display_name: Security Reviewer
+version: 1.0.0
+description: Reviews code and architecture for security risk.
+catalog_use_case: Review code changes for risky migrations, secrets, and unsafe deployment steps.
+catalog_constraints:
+  - No secrets or private user data are included.
+  - Do not claim production readiness without validation evidence.
+  - Follow catalog contribution rules before submitting.
