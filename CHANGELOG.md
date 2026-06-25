@@ -2,6 +2,14 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.3.0
+
+- Clarified that this repository is a developer authoring system built on top of Hermes Agent's native profile distribution runtime.
+- Added a profile distribution contract document that separates Hermes core responsibilities, template responsibilities, and author responsibilities.
+- Added `requirements.txt` and `Makefile` shortcuts for repeatable dependency installation, validation, smoke tests, generation smoke tests, release checks, and cleanup.
+- Updated CI to install dependencies through `requirements.txt` and compile scripts as part of validation.
+- Updated generated distributions to include the same convenience dependency and Makefile workflow.
+
 ## 0.2.0
 
 - Added release metadata guard, changelog discipline, and pull request release checks.

@@ -28,6 +28,9 @@ RELEASE_RELEVANT_PREFIXES = (
     "SECURITY.md",
     "CONTRIBUTING.md",
     "github-repo-metadata.yaml",
+    "requirements.txt",
+    "Makefile",
+    "docs/",
 )
 
 IGNORED_PATHS = {

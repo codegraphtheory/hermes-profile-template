@@ -92,6 +92,9 @@ def render_distribution(params: dict[str, Any], slug: str, description: str) -> 
                 "CONTRIBUTING.md",
                 "SECURITY.md",
                 "github-repo-metadata.yaml",
+                "requirements.txt",
+                "Makefile",
+                "docs/",
                 ".env.EXAMPLE",
             ],
         }
@@ -277,7 +280,8 @@ hermes profile install github.com/YOUR_ORG/{slug} --alias
 For local development:
 
 ```bash
-python3 scripts/validate_profile.py .
+python3 -m pip install -r requirements.txt
+make validate
 hermes profile install . --name {slug}-local --yes
 hermes -p {slug}-local chat
 ```
@@ -297,8 +301,11 @@ Edit `templates/profile.params.yaml` first to customize name, mission, principle
 ## Quality gates
 
 ```bash
-python3 scripts/validate_profile.py .
+make validate
+make smoke
 ```
+
+If you do not use `make`, run `python3 scripts/validate_profile.py .` and `scripts/smoke_install.sh` directly.
 
 ## Release discipline
 
@@ -306,7 +313,7 @@ For changes that affect profile behavior, generated files, config, docs, skills,
 
 1. Bump `version` in `distribution.yaml`.
 2. Add a matching `## <version>` entry to `CHANGELOG.md`.
-3. Run `python3 scripts/check_release_version.py --base origin/main` before opening a pull request.
+3. Run `make release-check` before opening a pull request.
 
 ## Safety
 
@@ -396,10 +403,13 @@ def copy_support_files(template_root: Path, output: Path) -> None:
         src = template_root / rel
         if src.exists():
             shutil.copytree(src, output / rel, dirs_exist_ok=True, ignore=ignore)
-    for rel in ["LICENSE", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md"]:
+    for rel in ["LICENSE", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md", "requirements.txt", "Makefile"]:
         src_file = template_root / rel
         if src_file.exists():
             shutil.copy2(src_file, output / rel)
+    docs_dir = template_root / "docs"
+    if docs_dir.exists():
+        shutil.copytree(docs_dir, output / "docs", dirs_exist_ok=True, ignore=ignore)
     catalog_templates = template_root / "templates" / "catalog"
     if catalog_templates.exists():
         shutil.copytree(catalog_templates, output / "templates" / "catalog", dirs_exist_ok=True, ignore=ignore)

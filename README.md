@@ -2,7 +2,9 @@
 
 Build high quality Hermes Agent profile distributions quickly.
 
-This repository is for people who want to create custom Hermes profiles that are installable, safe to publish, easy to maintain, and friendly to AI coding agents. Use it to create a new profile from a few parameters, validate the result, install it locally, then publish it for others to install with `hermes profile install`.
+This repository is an authoring system for developers who want to create custom Hermes profiles that are installable, safe to publish, easy to maintain, and friendly to AI coding agents. Hermes Agent core provides `hermes profile install`, `hermes profile update`, and runtime profile isolation. This template adds the developer workflow around that core: scaffolding, deterministic generation, validation, CI, release checks, and publication hygiene.
+
+For the boundary between Hermes core and this template, see [`docs/profile-distribution-contract.md`](docs/profile-distribution-contract.md).
 
 ## What you can do with it
 
@@ -11,16 +13,19 @@ This repository is for people who want to create custom Hermes profiles that are
 - Install this repository as a Hermes profile that helps you create other profiles interactively.
 - Validate a profile before publishing it.
 - Publish generated profiles so other users can install them from GitHub.
+- Run repeatable local quality gates through `make validate`, `make smoke`, and `make release-check`.
 
 ## Requirements
 
 - Hermes Agent installed and available as `hermes`.
 - Python 3.10 or newer.
-- `pyyaml` for validation and generation:
+- Python dependencies for validation and generation:
 
 ```bash
-python3 -m pip install pyyaml
+python3 -m pip install -r requirements.txt
 ```
+
+You can also run `make deps`.
 
 ## Option 1: Use this as a GitHub template
 
@@ -39,6 +44,13 @@ python3 scripts/validate_profile.py .
 ```
 
 Edit the profile files, then validate again before publishing.
+
+Convenience commands:
+
+```bash
+make validate
+make smoke
+```
 
 ## Option 2: Create a profile from command-line flags
 
@@ -135,11 +147,11 @@ python3 scripts/apply_github_metadata.py --repo YOUR_ORG/YOUR_PROFILE_REPO --app
 Run this from the profile repository root:
 
 ```bash
-python3 scripts/validate_profile.py .
-scripts/smoke_install.sh
+make validate
+make smoke
 ```
 
-The smoke script validates the repository, compiles Python scripts without writing bytecode, generates and validates a profile from `templates/profile.params.yaml`, and installs into a temporary `HERMES_HOME` when the Hermes CLI is available.
+The smoke script validates the repository, compiles Python scripts without writing bytecode, generates and validates a profile from `templates/profile.params.yaml`, and installs into a temporary `HERMES_HOME` when the Hermes CLI is available. If you do not use `make`, run `python3 scripts/validate_profile.py .` and `scripts/smoke_install.sh` directly.
 
 
 ## Release discipline
@@ -151,7 +163,7 @@ For any change that affects profile behavior, generated files, config, docs, ski
 3. Run the release guard before opening a pull request:
 
 ```bash
-python3 scripts/check_release_version.py --base origin/main
+make release-check
 ```
 
 The GitHub Actions release guard enforces this on pull requests.
