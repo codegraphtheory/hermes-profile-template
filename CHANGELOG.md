@@ -2,6 +2,15 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.5.0
+
+- Added a bundled `prompt-engineering` skill that expands a simple profile idea into a mature Hermes profile prompt and generation brief.
+- Added `templates/prompts/prompt-to-profile.md` as a reusable prompt expansion template.
+- Updated `profile-architect` and `profile-craft` workflows so short user ideas are expanded before params generation.
+- Added `profile_prompt` support to generated params and `docs/profile-prompt.md` output so generated repos preserve the mature prompt that shaped them.
+- Updated generated profile READMEs to explain the preserved design prompt and regeneration workflow.
+- Updated support-file copying so generated repos include the template's authoring skills without copying unrelated runtime skills.
+
 ## 0.4.0
 
 - Rebuilt the README around the literal prompt-to-installable-profile-repo workflow.

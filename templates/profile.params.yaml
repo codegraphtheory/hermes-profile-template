@@ -52,6 +52,15 @@ output_contract:
   - Verification command and exact outcome.
   - Remaining risks or manual steps.
 
+# Preserve the mature prompt that was expanded from the user's simple sentence.
+# The generator writes this to docs/profile-prompt.md.
+profile_prompt: |
+  Create a mature Hermes profile prompt before generation.
+
+  Include mission, target users, primary workflows, trigger patterns, expected inputs,
+  required outputs, tool-use policy, safety boundaries, required bundled skills,
+  environment variables, verification expectations, and repository output requirements.
+
 github_topics:
   - hermes-agent
   - ai-agents

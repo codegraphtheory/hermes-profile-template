@@ -286,6 +286,16 @@ hermes profile install . --name {slug}-local --yes
 hermes -p {slug}-local chat
 ```
 
+## Design prompt
+
+The mature prompt used to generate or refine this profile is preserved in:
+
+```text
+docs/profile-prompt.md
+```
+
+When starting from a simple sentence, expand it with `skills/prompt-engineering/SKILL.md`, place the mature prompt in `templates/profile.params.yaml` as `profile_prompt`, then regenerate or update this profile.
+
 ## Generate another profile from this one
 
 This distribution includes a deterministic generator:
@@ -356,6 +366,33 @@ def render_template_source_file(params: dict[str, Any]) -> str | None:
     return yaml.safe_dump(data, sort_keys=False, default_flow_style=False)
 
 
+def render_profile_prompt(params: dict[str, Any], display_name: str, description: str) -> str:
+    profile_prompt = str(params.get("profile_prompt") or "").strip()
+    if profile_prompt:
+        return f"""# Mature Profile Prompt
+
+This document preserves the expanded prompt used to generate this Hermes profile distribution.
+
+{profile_prompt}
+"""
+    return f"""# Mature Profile Prompt
+
+This profile was generated from structured params. Use this document to record the mature profile prompt when regenerating or substantially redesigning the profile.
+
+## Profile
+
+{display_name}
+
+## Mission
+
+{description}
+
+## Regeneration note
+
+For future changes, start with a simple sentence, expand it with the prompt-engineering workflow in `skills/prompt-engineering/SKILL.md`, write the result to the `profile_prompt` field in `templates/profile.params.yaml`, then regenerate or edit the profile with validation.
+"""
+
+
 def render_params_example(slug: str, display_name: str, description: str, author: str) -> str:
     data = {
         "name": slug,
@@ -386,6 +423,12 @@ def render_params_example(slug: str, display_name: str, description: str, author
             "Fabricated facts, links, audits, or affiliations.",
         ],
         "output_contract": ["Result.", "Evidence or command output when relevant.", "Next step."],
+        "profile_prompt": (
+            "Create a mature Hermes profile prompt before generation. "
+            "Capture mission, target users, workflows, trigger patterns, inputs, "
+            "outputs, tool-use policy, safety boundaries, required skills, "
+            "verification, and repository output requirements."
+        ),
         "github_topics": [
             "hermes-agent",
             "ai-agents",
@@ -406,15 +449,16 @@ def copy_support_files(template_root: Path, output: Path) -> None:
     # When this repository is installed as a Hermes profile, Hermes may seed the
     # profile with many bundled user skills. Do not copy that entire runtime
     # skills directory into generated repos. Only copy this template's own
-    # authoring skill as a starter example.
-    profile_craft = template_root / "skills" / "profile-craft"
-    if profile_craft.exists():
-        shutil.copytree(
-            profile_craft,
-            output / "skills" / "profile-craft",
-            dirs_exist_ok=True,
-            ignore=ignore,
-        )
+    # authoring skills as starter examples.
+    for skill_name in ["profile-craft", "prompt-engineering"]:
+        skill_dir = template_root / "skills" / skill_name
+        if skill_dir.exists():
+            shutil.copytree(
+                skill_dir,
+                output / "skills" / skill_name,
+                dirs_exist_ok=True,
+                ignore=ignore,
+            )
     for rel in ["LICENSE", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md", "requirements.txt", "Makefile"]:
         src_file = template_root / rel
         if src_file.exists():
@@ -460,6 +504,7 @@ def generate(params: dict[str, Any], output: Path, force: bool, template_root: P
     write(output / "github-repo-metadata.yaml", render_github_metadata(slug, description, params))
     write(output / "templates" / "profile.params.yaml", render_params_example(slug, display_name, description, author))
     copy_support_files(template_root, output)
+    write(output / "docs" / "profile-prompt.md", render_profile_prompt(params, display_name, description))
     template_source_file = render_template_source_file(params)
     if template_source_file:
         write(output / ".github" / "template-source.yml", template_source_file)

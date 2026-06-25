@@ -1,6 +1,6 @@
 name: hermes-profile-template
-version: 0.4.0
-description: "Prompt-to-repo authoring system for building installable Hermes Agent profile distributions."
+version: 0.5.0
+description: "Prompt-to-repo authoring system that expands simple ideas into mature prompts and installable Hermes Agent profile distributions."
 hermes_requires: ">=0.12.0"
 author: "CodeGraphTheory"
 license: "MIT"

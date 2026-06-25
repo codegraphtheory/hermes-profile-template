@@ -27,13 +27,14 @@ Use this skill when creating or improving a Hermes Agent profile distribution. T
 
 When a user asks for a new profile from a prompt:
 
-1. Ask only for missing essentials: profile name, mission, target user, required integrations, data sensitivity, risk level, and output style.
-2. If enough information is present, proceed with sensible defaults.
-3. Write a params YAML file using `templates/profile.params.yaml` as the schema reference.
-4. Run `python3 scripts/generate_profile.py --params <params.yaml> --output <target-dir>`.
-5. Run `python3 <target-dir>/scripts/validate_profile.py <target-dir>`.
-6. If Hermes is available, run `hermes profile install <target-dir> --name <smoke-name> --yes --force`.
-7. Report generated repo path, validation output, smoke-install output if run, and next publish command.
+1. If the prompt is only a simple sentence, expand it into a mature profile prompt with `skills/prompt-engineering/SKILL.md` before generating files.
+2. Ask only for missing essentials: profile name, mission, target user, required integrations, data sensitivity, risk level, and output style.
+3. If enough information is present, proceed with sensible defaults and state assumptions.
+4. Write a params YAML file using `templates/profile.params.yaml` as the schema reference. Include the mature prompt in `profile_prompt` so the generated repo can preserve it in `docs/profile-prompt.md`.
+5. Run `python3 scripts/generate_profile.py --params <params.yaml> --output <target-dir>`.
+6. Run `python3 <target-dir>/scripts/validate_profile.py <target-dir>`.
+7. If Hermes is available, run `hermes profile install <target-dir> --name <smoke-name> --yes --force`.
+8. Report mature prompt path, generated repo path, validation output, smoke-install output if run, and next publish command.
 
 ### Profile design workflow
 

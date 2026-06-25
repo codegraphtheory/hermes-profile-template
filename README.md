@@ -10,7 +10,7 @@ For the boundary between Hermes core and this template, see [`docs/profile-distr
 
 ## The literal workflow
 
-One prompt should become a real repository directory that can be installed with `hermes profile install`.
+One simple sentence should become a mature agent prompt, then a real repository directory that can be installed with `hermes profile install`.
 
 ```bash
 export DEMO_ROOT="/tmp/hermes-profile-builder-demo"
@@ -27,7 +27,15 @@ hermes profile install github.com/codegraphtheory/hermes-profile-template \
 profile-architect chat
 ```
 
-Paste a product-style prompt:
+Paste a one-sentence idea or a product-style prompt. The installed profile will first expand the idea into a mature profile prompt, preserve that prompt in the generated repo, then generate and validate the profile.
+
+Minimal prompt:
+
+```text
+Turn "a database migration reviewer" into a fantastic installable Hermes profile repo under /tmp/hermes-profile-builder-demo/database-migration-reviewer. Expand the idea into a mature agent prompt first, then generate the repo and run validation.
+```
+
+More detailed prompt:
 
 ```text
 Create a Hermes profile distribution for a database migration reviewer.
@@ -79,7 +87,8 @@ scripts/generate_profile.py     Deterministic generator
 scripts/smoke_install.sh        Local install smoke test
 .github/workflows/              Validation and release guard CI
 skills/                         Bundled profile-specific skills
-templates/                      Params and catalog templates
+templates/                      Params, prompt-engineering, and catalog templates
+docs/profile-prompt.md          Mature prompt preserved from the user's simple idea
 ```
 
 The generated repo is not just a text draft. It should validate locally and install through Hermes.
@@ -88,9 +97,9 @@ The generated repo is not just a text draft. It should validate locally and inst
 
 Every path below ends in the same contract: a directory that passes validation and can be installed with `hermes profile install`.
 
-### Path 1: Prompt to repo with the installed profile
+### Path 1: Simple sentence to repo with the installed profile
 
-Use this when you want the claim literally: describe a profile in natural language and let the `profile-architect` profile create the repo.
+Use this when you want the claim literally: give a short natural-language idea, let `profile-architect` expand it into a mature profile prompt, then generate the repo.
 
 ```bash
 hermes profile install github.com/codegraphtheory/hermes-profile-template \
@@ -102,6 +111,12 @@ profile-architect chat
 ```
 
 Prompt pattern:
+
+```text
+Turn "[simple profile idea]" into a fantastic installable Hermes profile repo under [absolute output path]. Expand the idea into a mature agent prompt first, preserve it in docs/profile-prompt.md, then generate the repo and run validation.
+```
+
+Detailed prompt pattern:
 
 ```text
 Create a Hermes profile distribution for [target user or workflow].
@@ -120,11 +135,12 @@ Repository requirements:
 
 Expected behavior from the installed profile:
 
-1. Ask only for missing essentials.
-2. Write a params YAML file.
-3. Run `python3 scripts/generate_profile.py --params <params.yaml> --output <target-dir>`.
-4. Run `python3 <target-dir>/scripts/validate_profile.py <target-dir>`.
-5. Report the generated repo path and exact validation output.
+1. Expand short input into a mature profile prompt.
+2. Ask only for missing essentials.
+3. Write a params YAML file with `profile_prompt` preserved.
+4. Run `python3 scripts/generate_profile.py --params <params.yaml> --output <target-dir>`.
+5. Run `python3 <target-dir>/scripts/validate_profile.py <target-dir>`.
+6. Report the generated repo path and exact validation output.
 
 ### Path 2: Prompt to repo in one non-interactive command
 
@@ -141,9 +157,9 @@ hermes profile install github.com/codegraphtheory/hermes-profile-template \
   --yes
 
 hermes -p profile-architect chat -q '
-Create a Hermes profile distribution for a database migration reviewer.
-Write it under /tmp/hermes-profile-builder-demo/database-migration-reviewer.
-It should review SQL migration diffs, flag destructive operations, produce rollback checklists, include one bundled migration-review skill, and run validation before finishing.
+Turn "a database migration reviewer" into a fantastic installable Hermes profile repo under /tmp/hermes-profile-builder-demo/database-migration-reviewer.
+Expand the idea into a mature agent prompt first, preserve it in docs/profile-prompt.md, then generate the repo and run validation.
+The profile should review SQL migration diffs, flag destructive operations, produce rollback checklists, and include one bundled migration-review skill.
 Do not use real credentials.
 '
 ```

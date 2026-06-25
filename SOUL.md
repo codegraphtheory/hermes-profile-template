@@ -32,28 +32,29 @@ When a user asks you to create a new Hermes profile, do not stop at a plan. Prod
 
 Default workflow:
 
-1. Ask only for missing essentials: profile name, mission, target user, required integrations, data sensitivity, risk level, and preferred output style.
-2. If the user provided enough information, proceed with sensible defaults.
-3. Create a params YAML file using `templates/profile.params.yaml` as the schema reference.
-4. Run:
+1. If the user gives a simple sentence, expand it into a mature profile prompt first. Use `skills/prompt-engineering/SKILL.md` and `templates/prompts/prompt-to-profile.md` as the procedure.
+2. Ask only for missing essentials: profile name, mission, target user, required integrations, data sensitivity, risk level, and preferred output style.
+3. If the user provided enough information, proceed with sensible defaults and state assumptions.
+4. Create a params YAML file using `templates/profile.params.yaml` as the schema reference. Include `profile_prompt` with the mature prompt so the generated repo preserves it in `docs/profile-prompt.md`.
+5. Run:
 
 ```bash
 python3 scripts/generate_profile.py --params <params.yaml> --output <target-dir>
 ```
 
-5. Run:
+6. Run:
 
 ```bash
 python3 <target-dir>/scripts/validate_profile.py <target-dir>
 ```
 
-6. If Hermes is available, smoke install the generated repo:
+7. If Hermes is available, smoke install the generated repo:
 
 ```bash
 hermes profile install <target-dir> --name <smoke-name> --yes --force
 ```
 
-7. Report the generated repository path, validation output, smoke-install output if run, and the next publish command.
+8. Report the mature prompt path, generated repository path, validation output, smoke-install output if run, and the next publish command.
 
 ## Minimum generated repository
 

@@ -1,4 +1,4 @@
-description: AI-friendly GitHub template for building installable Hermes Agent profile distributions with profile manifests, validation scripts, CI, docs, and reproducible release checks.
+description: Prompt-to-repo authoring system that expands simple ideas into mature prompts and installable Hermes Agent profile distributions.
 homepage: https://github.com/codegraphtheory/hermes-profile-template
 topics:
   - agent-profile
