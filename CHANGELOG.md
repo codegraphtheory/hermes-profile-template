@@ -2,6 +2,10 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.3.1
+
+- Added release readiness checklist workflow.
+
 ## 0.3.0
 
 - Clarified that this repository is a developer authoring system built on top of Hermes Agent's native profile distribution runtime.
