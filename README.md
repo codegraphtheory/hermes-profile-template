@@ -156,15 +156,29 @@ The smoke script validates the repository, compiles Python scripts without writi
 
 ## Release discipline
 
-For any change that affects profile behavior, generated files, config, docs, skills, scripts, or distribution metadata:
+For any change that affects profile behavior, generated files, config, docs, skills, scripts, or distribution metadata, a release readiness workflow must be run.
 
-1. Bump `version` in `distribution.yaml`.
+Before opening a pull request or tagging a release:
+
+1. Bump the `version` in `distribution.yaml`.
 2. Add a matching `## <version>` entry to `CHANGELOG.md`.
-3. Run the release guard before opening a pull request:
+3. Run the release readiness check:
 
 ```bash
 make release-check
 ```
+
+This runs `scripts/release_readiness.py`, which checks:
+- **Version Discipline**: Ensures version changes when release-relevant files are modified (relative to a base branch, e.g., `origin/main`).
+- **Changelog Validation**: Verifies that a matching release entry heading exists in `CHANGELOG.md`.
+- **Profile Validation**: Runs standard checks from `validate_profile.py` (formatting, skills, metadata).
+- **No Runtime Files**: Verifies no runtime, temporary, or cache files (e.g., `.env`, `state.db`) are committed.
+- **No Secrets**: Scans the workspace to prevent hardcoded secrets or credentials.
+- **Generator Smoke**: Runs a full template compile and verifies the generated profile passes validation.
+- **Install Smoke**: If Hermes CLI is available, verifies that the profile installs successfully and contains required files.
+- **Install Documentation**: Ensures that the `README.md` or other docs list the correct installation command for this repository.
+
+It generates a detailed Markdown report summarizing the checks, status (PASS, FAIL, SKIPPED), and any remediation hints.
 
 The GitHub Actions release guard enforces this on pull requests.
 
