@@ -20,7 +20,7 @@ This template provides developer-facing authoring and release tooling for creati
 - deterministic YAML-driven generation with `scripts/generate_profile.py`
 - publish-time validation with `scripts/validate_profile.py`
 - isolated install smoke tests with `scripts/smoke_install.sh`
-- release metadata checks with `scripts/check_release_version.py`
+- release readiness checklist with `scripts/release_readiness.py`
 - repeatable GitHub metadata setup with `scripts/apply_github_metadata.py`
 - CI workflows for validation and release hygiene
 - catalog snippets and explicit template lineage metadata
