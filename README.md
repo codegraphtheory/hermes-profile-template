@@ -169,6 +169,8 @@ Most users should start with these files:
 - `.env.EXAMPLE`: documented environment variables with placeholder values only.
 - `skills/`: bundled reusable procedures the profile can load.
 - `AGENTS.md`: instructions for AI coding agents that maintain the profile repository.
+- `CONTRIBUTING.md`: contributor workflow, profile quality bar, and PR checklist.
+- `SECURITY.md`: vulnerability reporting and secret-handling policy.
 - `templates/catalog/`: snippets for adding the profile to external Hermes profile catalogs without looking like a generic link drop.
 
 Never commit `.env`, API keys, OAuth tokens, credentials, memories, sessions, logs, runtime databases, or private user data.

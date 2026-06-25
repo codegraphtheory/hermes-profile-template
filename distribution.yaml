@@ -22,4 +22,6 @@ distribution_owned:
   - README.md
   - AGENTS.md
   - CHANGELOG.md
+  - CONTRIBUTING.md
+  - SECURITY.md
   - .env.EXAMPLE

@@ -89,6 +89,8 @@ def render_distribution(params: dict[str, Any], slug: str, description: str) -> 
                 "README.md",
                 "AGENTS.md",
                 "CHANGELOG.md",
+                "CONTRIBUTING.md",
+                "SECURITY.md",
                 ".env.EXAMPLE",
             ],
         }
@@ -307,7 +309,7 @@ For changes that affect profile behavior, generated files, config, docs, skills,
 
 ## Safety
 
-Do not commit `.env`, credentials, memories, sessions, logs, runtime databases, or user data.
+Do not commit `.env`, credentials, memories, sessions, logs, runtime databases, or user data. See `SECURITY.md` for vulnerability reporting and secret-handling expectations. See `CONTRIBUTING.md` for the validation and release checklist.
 """
 
 
@@ -367,7 +369,7 @@ def copy_support_files(template_root: Path, output: Path) -> None:
         src = template_root / rel
         if src.exists():
             shutil.copytree(src, output / rel, dirs_exist_ok=True, ignore=ignore)
-    for rel in ["LICENSE", "CHANGELOG.md"]:
+    for rel in ["LICENSE", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md"]:
         src_file = template_root / rel
         if src_file.exists():
             shutil.copy2(src_file, output / rel)
