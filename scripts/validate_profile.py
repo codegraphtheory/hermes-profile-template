@@ -6,6 +6,7 @@ import argparse
 import json
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -37,11 +38,54 @@ USER_OWNED = {
     "cache",
 }
 
+FORBIDDEN_DIR_NAMES = USER_OWNED | {
+    "__pycache__",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+    "htmlcov",
+    "dist",
+    "build",
+    "hook-sessions",
+}
+
+FORBIDDEN_FILE_NAMES = {
+    ".coverage",
+    "coverage.xml",
+}
+
+FORBIDDEN_SUFFIXES = (
+    ".pyc",
+    ".pyo",
+    ".pyd",
+)
+
 REQUIRED_ROOT = ["distribution.yaml", "SOUL.md", "README.md", "AGENTS.md", "config.yaml", ".env.EXAMPLE"]
 
 
 def fail(errors: list[str], message: str) -> None:
     errors.append(message)
+
+
+def iter_validation_paths(root: Path) -> list[Path]:
+    """Return files to validate.
+
+    In git repositories, validate tracked files plus unignored untracked files.
+    Ignored local caches are not distribution content and should not make local
+    validation fail. In generated directories without git metadata, validate the
+    full tree.
+    """
+    if (root / ".git").exists():
+        proc = subprocess.run(
+            ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+            cwd=root,
+            text=False,
+            capture_output=True,
+        )
+        if proc.returncode == 0:
+            rels = [item.decode("utf-8") for item in proc.stdout.split(b"\0") if item]
+            return [root / rel for rel in rels]
+    return [path for path in root.rglob("*") if path.is_file()]
 
 
 def load_yaml(path: Path, errors: list[str]):
@@ -143,9 +187,23 @@ def check_skills(root: Path, errors: list[str]) -> None:
 
 
 def check_forbidden_paths(root: Path, errors: list[str]) -> None:
-    for path in root.iterdir():
+    seen_dirs: set[Path] = set()
+    for path in iter_validation_paths(root):
+        if ".git" in path.parts:
+            continue
+        rel = path.relative_to(root)
+        for parent in rel.parents:
+            if str(parent) == "." or parent in seen_dirs:
+                continue
+            seen_dirs.add(parent)
+            if parent.name in FORBIDDEN_DIR_NAMES:
+                fail(errors, f"Runtime or cache directory must not be committed: {parent}")
+        if path.name in FORBIDDEN_FILE_NAMES:
+            fail(errors, f"Runtime or coverage file must not be committed: {rel}")
         if path.name in USER_OWNED:
-            fail(errors, f"User-owned runtime path must not be committed: {path.name}")
+            fail(errors, f"User-owned runtime file must not be committed: {rel}")
+        if path.name.endswith(FORBIDDEN_SUFFIXES):
+            fail(errors, f"Python cache artifact must not be committed: {rel}")
 
 
 def check_symlinks(root: Path, errors: list[str]) -> None:

@@ -2,6 +2,15 @@
 *.db
 *.db-shm
 *.db-wal
+*.pyc
+*.pyo
+*.pyd
+.coverage
+coverage.xml
+htmlcov/
+dist/
+build/
+*.egg-info/
 logs/
 sessions/
 memories/
@@ -9,6 +18,10 @@ workspace/
 plans/
 local/
 cache/
+hook-sessions/
+.heavy-coder/hook-sessions/
 __pycache__/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .DS_Store

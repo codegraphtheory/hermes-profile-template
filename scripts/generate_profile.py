@@ -378,7 +378,10 @@ def copy_support_files(template_root: Path, output: Path) -> None:
         shutil.copytree(catalog_templates, output / "templates" / "catalog", dirs_exist_ok=True, ignore=ignore)
     gitignore = output / ".gitignore"
     if not gitignore.exists():
-        write(gitignore, ".env\n*.db\n*.db-shm\n*.db-wal\nlogs/\nsessions/\nmemories/\nworkspace/\nplans/\nlocal/\ncache/\n__pycache__/\n.pytest_cache/\n.DS_Store\n")
+        write(
+            gitignore,
+            ".env\n*.db\n*.db-shm\n*.db-wal\n*.pyc\n*.pyo\n*.pyd\n.coverage\ncoverage.xml\nhtmlcov/\ndist/\nbuild/\n*.egg-info/\nlogs/\nsessions/\nmemories/\nworkspace/\nplans/\nlocal/\ncache/\nhook-sessions/\n.heavy-coder/hook-sessions/\n__pycache__/\n.pytest_cache/\n.mypy_cache/\n.ruff_cache/\n.DS_Store\n",
+        )
 
 
 def generate(params: dict[str, Any], output: Path, force: bool, template_root: Path) -> None:
