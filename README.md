@@ -357,6 +357,16 @@ Most generated profile repos should customize:
 
 Never commit `.env`, API keys, OAuth tokens, credentials, memories, sessions, logs, runtime databases, or private user data.
 
+## CI validation
+
+Generated profile repositories include the same GitHub Actions validation workflow under `.github/workflows/validate.yml`. To run the CI checks locally before opening a PR:
+
+```bash
+python3 scripts/profile_ci_check.py .
+```
+
+The CI check compiles scripts, validates the profile distribution, generates and validates a profile from `templates/profile.params.yaml` when present, and performs a Hermes install smoke test when the `hermes` CLI is available. If Hermes is not installed, the install smoke step is reported as skipped after the other checks pass.
+
 ## Release discipline
 
 For any change that affects profile behavior, generated files, config, docs, skills, scripts, or distribution metadata:

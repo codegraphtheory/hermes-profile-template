@@ -1,4 +1,4 @@
-.PHONY: deps validate compile generate-smoke sentence-smoke smoke web-demo release-check clean
+.PHONY: deps validate compile generate-smoke sentence-smoke ci-check smoke web-demo release-check clean
 
 PYTHON ?= python3
 BASE ?= origin/main
@@ -22,6 +22,9 @@ sentence-smoke:
 	rm -rf $(GEN_ROOT)
 	$(PYTHON) scripts/generate_from_sentence.py --sentence "a database migration reviewer" --output $(GEN_ROOT)/sentence-generated --force
 	$(PYTHON) $(GEN_ROOT)/sentence-generated/scripts/validate_profile.py $(GEN_ROOT)/sentence-generated
+
+ci-check:
+	$(PYTHON) scripts/profile_ci_check.py .
 
 web-demo:
 	$(PYTHON) web-demo/server.py
