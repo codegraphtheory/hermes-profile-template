@@ -1,0 +1,5 @@
+name: security-reviewer
+version: 1.0.0
+description: Reviews code and architecture for security risk.
+template_source:
+  url: https://github.com/codegraphtheory/hermes-profile-template

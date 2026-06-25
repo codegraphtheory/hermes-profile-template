@@ -340,6 +340,21 @@ Apply after reviewing the dry run:
 python3 scripts/apply_github_metadata.py --repo YOUR_ORG/YOUR_PROFILE_REPO --apply
 ```
 
+Run the discovery optimizer before publishing a generated profile:
+
+```bash
+python3 scripts/discovery_optimizer.py .
+```
+
+For CI or PR comments, emit a deterministic JSON or Markdown report:
+
+```bash
+python3 scripts/discovery_optimizer.py . --json
+python3 scripts/discovery_optimizer.py . --markdown
+```
+
+The optimizer checks for a concise description, visible install command, useful GitHub topics, search-friendly README headings, template lineage, validation commands, license and security docs, and catalog or sharing guidance. By default it only reports recommendations. Use `--fix` to safely add missing recommended topics to `github-repo-metadata.yaml`.
+
 ## What to customize
 
 Most generated profile repos should customize:
