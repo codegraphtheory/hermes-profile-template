@@ -52,7 +52,27 @@ make validate
 make smoke
 ```
 
-## Option 2: Create a profile from command-line flags
+## Option 2: Create a profile using the interactive guided wizard
+
+This is the most beginner-friendly path if you do not know all the required parameters up front. The wizard will prompt you for configuration details (name, description, target users, tools, required environment variables, safety boundaries, etc.), save a reusable `profile.params.yaml` file, and generate the profile distribution automatically.
+
+```bash
+git clone https://github.com/codegraphtheory/hermes-profile-template.git
+cd hermes-profile-template
+
+python3 scripts/profile_wizard.py
+```
+
+Follow the prompts on your terminal, then switch to the output directory, validate, and install:
+
+```bash
+cd ../your-new-profile
+make validate
+hermes profile install . --alias
+your-new-profile chat
+```
+
+## Option 3: Create a profile from command-line flags
 
 ```bash
 git clone https://github.com/codegraphtheory/hermes-profile-template.git
@@ -75,7 +95,7 @@ hermes profile install . --alias
 security-reviewer chat
 ```
 
-## Option 3: Create a profile from a params file
+## Option 4: Create a profile from a params file
 
 Copy the sample params file:
 
@@ -100,7 +120,7 @@ This is the best path when you want reproducible profile creation. The params fi
 
 Generated profiles can include explicit template lineage through the `template_source` field in the params file. GitHub only shows native `generated from` or `forked from` linkage when a repository is created through those GitHub flows, so this template records lineage in `distribution.yaml`, `.github/template-source.yml`, and the generated README.
 
-## Option 4: Install this repo as an interactive profile builder
+## Option 5: Install this repo as an interactive profile builder
 
 Install the template itself as a Hermes profile:
 
