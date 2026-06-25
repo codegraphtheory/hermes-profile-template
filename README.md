@@ -305,6 +305,29 @@ python3 scripts/profile_wizard.py --name my-agent --output-dir /tmp/my-agent
 
 The wizard writes a deterministic params file then calls `scripts/generate_profile.py`. Pass `--no-generate` to write the params file only and get the next command to run.
 
+## Publishing your generated profile
+
+Once a generated profile is ready to share, use the catalog entry renderer to produce correctly-formatted submission text for awesome lists, profile directories, and catalog PRs.
+
+```bash
+# Markdown card (default — paste into a catalog README)
+python3 scripts/render_catalog_entry.py /path/to/generated-profile
+
+# YAML manifest snippet
+python3 scripts/render_catalog_entry.py /path/to/generated-profile --format yaml
+
+# Single README resource-list line
+python3 scripts/render_catalog_entry.py /path/to/generated-profile --format readme-line
+
+# PR body starter text
+python3 scripts/render_catalog_entry.py /path/to/generated-profile --format pr-body
+
+# All formats at once
+python3 scripts/render_catalog_entry.py /path/to/generated-profile --format all
+```
+
+Every output includes a reminder to read the target catalog's contribution guidelines before submitting. Do not automate mass PR creation — read each catalog's rules and submit manually.
+
 ## Quality scorecard
 
 The scorecard gives a richer quality signal beyond hard pass/fail validation. It checks readability, discoverability, and completeness across ten dimensions and produces terminal, JSON, or Markdown output.
