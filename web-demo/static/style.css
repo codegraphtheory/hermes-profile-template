@@ -157,6 +157,21 @@ textarea {
   display: grid;
   gap: 8px;
 }
+.activity-log {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-soft);
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+.activity-log div {
+  padding: 7px 8px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.018);
+}
 .stage {
   display: grid;
   grid-template-columns: 22px 1fr;
@@ -310,6 +325,9 @@ h2 { font-size: 22px; letter-spacing: -.25px; font-weight: 510; }
   margin: 0 0 14px;
 }
 .file-row {
+  width: 100%;
+  border: 0;
+  cursor: pointer;
   display: flex;
   justify-content: space-between;
   gap: 12px;
@@ -320,7 +338,32 @@ h2 { font-size: 22px; letter-spacing: -.25px; font-weight: 510; }
   font-size: 12px;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
+.file-row:hover { background: rgba(113,112,255,.09); }
 .file-row small { color: var(--muted); font-family: inherit; }
+.file-preview {
+  margin: 12px 0 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: #030712;
+  overflow: hidden;
+}
+.file-preview-title {
+  padding: 9px 11px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--soft);
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.file-preview pre {
+  margin: 0;
+  max-height: 360px;
+  overflow: auto;
+  padding: 12px;
+  color: #dbeafe;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
 #installCommand {
   display: block;
   white-space: pre-wrap;

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import mimetypes
+import os
 import subprocess
 import sys
 import threading
@@ -21,6 +22,9 @@ from urllib.parse import unquote, urlparse
 HOST = "127.0.0.1"
 PORT = 8765
 MAX_BODY = 12_000
+MAX_FILE_PREVIEW = 80_000
+HERMES_LLM_ENABLED = os.getenv("HERMES_WEB_DEMO_USE_LLM", "1").lower() not in {"0", "false", "no"}
+DEMO_STEP_DELAY = float(os.getenv("HERMES_WEB_DEMO_STEP_DELAY", "0.75"))
 ROOT = Path(__file__).resolve().parents[1]
 STATIC = Path(__file__).resolve().parent / "static"
 JOBS_ROOT = Path("/tmp/hermes-profile-web-demo-jobs")
@@ -43,6 +47,122 @@ def set_job(job_id: str, **updates) -> None:
         job["updated_at"] = time.time()
 
 
+
+def pace() -> None:
+    if DEMO_STEP_DELAY > 0:
+        time.sleep(DEMO_STEP_DELAY)
+
+
+def append_progress(job_id: str, stage_index: int, message: str) -> None:
+    with LOCK:
+        job = JOBS.setdefault(job_id, {})
+        progress = list(job.get("progress") or [])
+        progress.append(message)
+        job.update(status="running", stage_index=stage_index, progress=progress, updated_at=time.time())
+
+
+def run_hermes_llm(job_id: str, stage_index: int, title: str, prompt: str, timeout: int = 120) -> tuple[bool, str]:
+    """Run a real Hermes one-shot LLM call for web-demo generation steps."""
+    if not HERMES_LLM_ENABLED:
+        append_progress(job_id, stage_index, f"Skipped Hermes LLM call: {title}")
+        return False, "Hermes LLM calls disabled by HERMES_WEB_DEMO_USE_LLM=0."
+    append_progress(job_id, stage_index, f"Hermes LLM call: {title}")
+    cmd = ["hermes", "chat", "-Q", "-q", prompt]
+    try:
+        proc = subprocess.run(cmd, cwd=ROOT, text=True, capture_output=True, timeout=timeout)
+    except FileNotFoundError:
+        return False, "Hermes CLI was not found on PATH."
+    except subprocess.TimeoutExpired as exc:
+        return False, f"Hermes LLM call timed out after {timeout}s. Partial output: {exc.stdout or ''}"
+    output = (proc.stdout or "").strip()
+    if proc.returncode != 0 or not output:
+        return False, (proc.stderr or proc.stdout or "Hermes LLM call failed").strip()
+    return True, output
+
+
+def hermes_expand_prompt(job_id: str, sentence: str, job_dir: Path) -> tuple[Path | None, str]:
+    prompt = f"""You are improving a Hermes Agent profile generation request.
+
+User sentence:
+{sentence}
+
+Return only a mature Hermes profile prompt in Markdown. Do not include preamble.
+Make it specific, operational, and demoable. Include these sections:
+
+## Simple sentence
+## Mature Profile Prompt
+### Mission
+### Target users
+### Primary workflows
+### Required outputs
+### Safety boundaries
+### Tool and data policy
+### Skills to include
+### Demo behavior
+### Validation expectations
+
+The output should be suitable for docs/profile-prompt.md in an installable Hermes profile repository.
+"""
+    ok, output = run_hermes_llm(job_id, 0, "expand one sentence into mature profile prompt", prompt, timeout=150)
+    path = job_dir / "enhanced-profile-prompt.md"
+    if ok:
+        path.write_text(output + "\n", encoding="utf-8")
+        return path, "Hermes expanded the sentence into a mature profile prompt."
+    path.write_text(f"# Hermes prompt expansion unavailable\n\n```text\n{output}\n```\n", encoding="utf-8")
+    return None, f"Hermes prompt expansion unavailable. Used deterministic fallback. Reason: {output[:240]}"
+
+
+def hermes_review_generated_profile(job_id: str, sentence: str, output: Path) -> tuple[Path | None, str]:
+    snippets: list[str] = []
+    for rel in ["docs/profile-prompt.md", "SOUL.md", "skills/focused-workflow/SKILL.md", "docs/playable-demo.md", "docs/validation-report.md"]:
+        path = output / rel
+        if path.exists() and path.is_file():
+            text = path.read_text(encoding="utf-8", errors="replace")[:5000]
+            snippets.append(f"## {rel}\n\n{text}")
+    prompt = f"""Review this generated Hermes profile for demo quality.
+
+Original user sentence:
+{sentence}
+
+Generated profile snippets:
+{chr(10).join(snippets)}
+
+Return only Markdown with:
+## Verdict
+A one-paragraph quality verdict.
+
+## What is good
+- concise bullets
+
+## What still feels half baked
+- concise bullets
+
+## How to demo it
+- concrete talk track bullets
+
+Do not invent external claims. Be honest and useful.
+"""
+    ok, output_text = run_hermes_llm(job_id, 5, "review generated profile quality", prompt, timeout=150)
+    path = output / "docs" / "llm-quality-review.md"
+    if ok:
+        path.write_text(output_text + "\n", encoding="utf-8")
+        return path, "Hermes reviewed generated profile quality."
+    path.write_text(f"# LLM Quality Review\n\nHermes review unavailable.\n\n```text\n{output_text}\n```\n", encoding="utf-8")
+    return path, f"Hermes quality review unavailable. Reason: {output_text[:240]}"
+
+
+def safe_profile_file(profile_dir: Path, rel: str) -> Path:
+    rel_path = Path(rel)
+    if rel_path.is_absolute() or ".." in rel_path.parts:
+        raise ValueError("invalid file path")
+    path = (profile_dir / rel_path).resolve()
+    root = profile_dir.resolve()
+    if not str(path).startswith(str(root)) or not path.is_file():
+        raise ValueError("file not found")
+    if path.name in {".env", "auth.json", "state.db"}:
+        raise ValueError("file is not previewable")
+    return path
+
 def generated_file_summary(profile_dir: Path) -> list[dict[str, str]]:
     """Return the most important generated files for the web UI."""
     candidates = [
@@ -57,11 +177,16 @@ def generated_file_summary(profile_dir: Path) -> list[dict[str, str]]:
         ("demo/index.html", "playable demo"),
         ("docs/output-diagram.svg", "contents diagram"),
         ("docs/validation-report.md", "quality report"),
+        ("docs/llm-quality-review.md", "Hermes review"),
     ]
     summary: list[dict[str, str]] = []
     for rel, role in candidates:
         path = profile_dir / rel
-        if path.exists():
+        if rel == "skills" and path.exists():
+            for skill_file in sorted(path.glob("*/SKILL.md"))[:4]:
+                summary.append({"path": str(skill_file.relative_to(profile_dir)), "role": "bundled skill"})
+            continue
+        if path.exists() and path.is_file():
             summary.append({"path": rel, "role": role})
     return summary
 
@@ -75,30 +200,28 @@ def run_job(job_id: str, sentence: str) -> None:
         job_id,
         status="running",
         stage_index=0,
-        progress=["Expanding sentence into a mature profile prompt"],
+        progress=["Starting Hermes prompt engineering pass"],
     )
-    cmd = [
-        sys.executable,
-        str(ROOT / "scripts" / "generate_from_sentence.py"),
-        "--sentence",
-        sentence,
-        "--output",
-        str(output),
-        "--artifact-dir",
-        str(artifacts),
-        "--force",
-        "--json",
-    ]
     try:
-        set_job(
-            job_id,
-            stage_index=2,
-            progress=[
-                "Generating profile repository",
-                "Rendering playable demo and contents diagram",
-                "Running validation and packaging download",
-            ],
-        )
+        enhanced_prompt_path, prompt_status = hermes_expand_prompt(job_id, sentence, job_dir)
+        append_progress(job_id, 1, prompt_status)
+        pace()
+        cmd = [
+            sys.executable,
+            str(ROOT / "scripts" / "generate_from_sentence.py"),
+            "--sentence",
+            sentence,
+            "--output",
+            str(output),
+            "--artifact-dir",
+            str(artifacts),
+            "--force",
+            "--json",
+        ]
+        if enhanced_prompt_path:
+            cmd.extend(["--profile-prompt-file", str(enhanced_prompt_path)])
+        append_progress(job_id, 2, "Generating profile repository from refined prompt")
+        pace()
         proc = subprocess.run(cmd, cwd=ROOT, text=True, capture_output=True, timeout=180)
         raw = proc.stdout.strip()
         payload = json.loads(raw[raw.find("{"):]) if "{" in raw else {}
@@ -106,23 +229,34 @@ def run_job(job_id: str, sentence: str) -> None:
             error = payload.get("error") or proc.stderr or proc.stdout or "generation failed"
             set_job(job_id, status="failed", error=error, stdout=proc.stdout, stderr=proc.stderr)
             return
+        append_progress(job_id, 3, "Rendered playable demo and contents diagram")
+        pace()
+        append_progress(job_id, 4, "Validation passed and download zip was packaged")
+        pace()
         zip_path = Path(payload["zip_path"]) if payload.get("zip_path") else None
         demo_path = Path(payload["demo_html_path"])
         diagram_path = Path(payload["diagram_path"])
         prompt_path = Path(payload["prompt_path"])
         validation_report_path = Path(payload["validation_report_path"])
+        review_path, review_status = hermes_review_generated_profile(job_id, sentence, output)
+        append_progress(job_id, 5, review_status)
+        generated_files = generated_file_summary(output)
+        for item in generated_files:
+            item["url"] = f"/api/jobs/{job_id}/file/{item['path']}"
         result = {
             "slug": payload["slug"],
             "display_name": payload["display_name"],
             "profile_dir": payload["profile_dir"],
             "quality_summary": "Validated profile repo",
             "quality_checks": [
+                prompt_status,
                 "Hermes profile validation passed.",
                 "Mature prompt was preserved for review.",
                 "Playable demo and contents diagram were generated.",
+                review_status,
                 "Download zip was packaged from allowlisted profile files.",
             ],
-            "generated_files": generated_file_summary(output),
+            "generated_files": generated_files,
             "zip_url": f"/api/jobs/{job_id}/artifact/zip" if zip_path else None,
             "demo_url": f"/api/jobs/{job_id}/artifact/demo",
             "diagram_url": f"/api/jobs/{job_id}/artifact/diagram",
@@ -130,12 +264,14 @@ def run_job(job_id: str, sentence: str) -> None:
             "validation_url": f"/api/jobs/{job_id}/artifact/validation",
             "install_command": f"unzip {payload['slug']}.zip && cd {payload['slug']} && hermes profile install . --name {payload['slug']}-local --yes",
         }
+        final_progress = list((safe_job(job_id) or {}).get("progress") or []) + ["Complete"]
         set_job(
             job_id,
             status="complete",
-            progress=["Complete"],
+            progress=final_progress,
             result=result,
             paths={
+                "profile": str(output),
                 "zip": str(zip_path) if zip_path else None,
                 "demo": str(demo_path),
                 "diagram": str(diagram_path),
@@ -214,6 +350,24 @@ class Handler(BaseHTTPRequestHandler):
                 public = {k: v for k, v in job.items() if k not in {"paths"}}
                 public["job_id"] = job_id
                 self.send_json(public)
+                return
+            if len(parts) >= 5 and parts[3] == "file":
+                paths = job.get("paths") or {}
+                profile = paths.get("profile")
+                if not profile:
+                    self.send_json({"error": "profile files are not available yet"}, 404)
+                    return
+                rel = "/".join(parts[4:])
+                try:
+                    file_path = safe_profile_file(Path(profile), rel)
+                    data = file_path.read_text(encoding="utf-8", errors="replace")
+                except Exception as exc:
+                    self.send_json({"error": str(exc)}, 404)
+                    return
+                truncated = len(data) > MAX_FILE_PREVIEW
+                if truncated:
+                    data = data[:MAX_FILE_PREVIEW] + "\n\n[truncated]"
+                self.send_json({"path": rel, "content": data, "truncated": truncated})
                 return
             if len(parts) == 5 and parts[3] == "artifact":
                 kind = parts[4]

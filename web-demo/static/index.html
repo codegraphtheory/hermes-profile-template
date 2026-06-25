@@ -10,7 +10,7 @@
   <main class="window" id="window">
     <section class="composer-pane" id="composerPane" aria-label="Profile idea input">
       <div class="composer-shell">
-        <textarea id="sentence" maxlength="1000" rows="5" spellcheck="true" placeholder="Type a sentence like “a database migration reviewer”. I will expand it into a mature agent prompt, generate an installable Hermes profile repo, validate it, build a playable demo, draw a contents diagram, and package the download."></textarea>
+        <textarea id="sentence" maxlength="1000" rows="5" spellcheck="true" placeholder="Type a sentence like “a database migration reviewer”. I will call Hermes to expand it into a mature agent prompt, generate an installable profile repo, call Hermes again for a quality review, show every important file inline, and package the download."></textarea>
         <div class="composer-footer">
           <span id="composerHint">Press Command Enter to generate</span>
           <button id="generate" aria-label="Generate profile">Generate</button>
@@ -25,6 +25,7 @@
           <span id="statusLabel">Waiting</span>
         </div>
         <ol class="stage-list" id="stageList"></ol>
+        <div class="activity-log" id="activityLog"></div>
       </aside>
 
       <section class="detail-pane" aria-live="polite">
@@ -58,6 +59,10 @@
               <span>What was generated</span>
               <div id="qualityChecks" class="quality-list"></div>
               <div class="file-list" id="generatedFiles"></div>
+              <div class="file-preview" id="filePreview" hidden>
+                <div class="file-preview-title" id="filePreviewTitle">File preview</div>
+                <pre id="filePreviewContent"></pre>
+              </div>
               <code id="installCommand"></code>
               <div class="artifact-grid">
                 <a id="downloadZip" class="artifact primary" href="#">Download zip</a>

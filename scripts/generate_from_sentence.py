@@ -268,11 +268,11 @@ Use this profile when the user asks to analyze, review, triage, generate, summar
 """
 
 
-def params_for(sentence: str, output: Path) -> dict[str, Any]:
+def params_for(sentence: str, output: Path, profile_prompt_override: str | None = None) -> dict[str, Any]:
     slug = slugify(sentence)
     display = titleize(slug)
     domain = infer_domain(sentence)
-    prompt = mature_prompt(sentence, slug, display, domain, output)
+    prompt = profile_prompt_override or mature_prompt(sentence, slug, display, domain, output)
     topics = ["hermes-agent", "ai-agents", "agent-profile", "profile-distribution"] + domain["topics"]
     return {
         "name": slug,
@@ -481,11 +481,12 @@ def run_validation(profile_dir: Path) -> str:
     return output
 
 
-def build(sentence: str, output: Path, force: bool, artifact_dir: Path | None, package: bool) -> BuildResult:
+def build(sentence: str, output: Path, force: bool, artifact_dir: Path | None, package: bool, profile_prompt_file: Path | None = None) -> BuildResult:
     sentence = sanitize_sentence(sentence)
     output = output.resolve()
     template_root = Path(__file__).resolve().parents[1]
-    params = params_for(sentence, output)
+    profile_prompt_override = profile_prompt_file.read_text(encoding="utf-8") if profile_prompt_file else None
+    params = params_for(sentence, output, profile_prompt_override)
     slug = params["name"]
     display = params["display_name"]
     if output.exists() and force:
@@ -529,10 +530,18 @@ def main() -> int:
     parser.add_argument("--force", action="store_true", help="Overwrite output if it exists")
     parser.add_argument("--artifact-dir", help="Directory for zip and manifest artifacts")
     parser.add_argument("--no-package", action="store_true", help="Skip zip packaging")
+    parser.add_argument("--profile-prompt-file", help="Optional mature prompt markdown produced by Hermes/LLM refinement")
     parser.add_argument("--json", action="store_true", help="Print machine-readable JSON")
     args = parser.parse_args()
     try:
-        result = build(args.sentence, Path(args.output), args.force, Path(args.artifact_dir).resolve() if args.artifact_dir else None, not args.no_package)
+        result = build(
+            args.sentence,
+            Path(args.output),
+            args.force,
+            Path(args.artifact_dir).resolve() if args.artifact_dir else None,
+            not args.no_package,
+            Path(args.profile_prompt_file).resolve() if args.profile_prompt_file else None,
+        )
     except Exception as exc:
         if args.json:
             print(json.dumps({"ok": False, "error": str(exc)}))

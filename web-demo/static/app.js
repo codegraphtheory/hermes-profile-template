@@ -4,6 +4,7 @@ const sentence = document.querySelector('#sentence');
 const generate = document.querySelector('#generate');
 const workbench = document.querySelector('#workbench');
 const stageList = document.querySelector('#stageList');
+const activityLog = document.querySelector('#activityLog');
 const panelGrid = document.querySelector('#panelGrid');
 const statusDot = document.querySelector('#statusDot');
 const statusLabel = document.querySelector('#statusLabel');
@@ -18,6 +19,9 @@ const installCommand = document.querySelector('#installCommand');
 const qualityPill = document.querySelector('#qualityPill');
 const qualityChecks = document.querySelector('#qualityChecks');
 const generatedFiles = document.querySelector('#generatedFiles');
+const filePreview = document.querySelector('#filePreview');
+const filePreviewTitle = document.querySelector('#filePreviewTitle');
+const filePreviewContent = document.querySelector('#filePreviewContent');
 const downloadZip = document.querySelector('#downloadZip');
 const playDemo = document.querySelector('#playDemo');
 const openDemoInline = document.querySelector('#openDemoInline');
@@ -30,8 +34,8 @@ const diagramFrame = document.querySelector('#diagramFrame');
 const STAGES = [
   {
     id: 'prompt',
-    title: 'Mature prompt',
-    detail: 'Expanding the sentence into mission, users, workflows, tools, outputs, and safety boundaries.',
+    title: 'Hermes prompt pass',
+    detail: 'Calling Hermes to expand the sentence into a mature profile prompt.',
     panelTitle: 'Prompt engineering',
     panelBody: 'The simple sentence becomes a complete agent design brief that is preserved in docs/profile-prompt.md.',
     artifact: 'docs/profile-prompt.md'
@@ -70,11 +74,11 @@ const STAGES = [
   },
   {
     id: 'validation',
-    title: 'Validation and package',
-    detail: 'Running the validator and packaging a safe downloadable zip artifact.',
-    panelTitle: 'Validated download',
-    panelBody: 'The finished repo is validated, zipped, and exposed through local artifact links.',
-    artifact: 'validation report and zip'
+    title: 'Hermes quality review',
+    detail: 'Calling Hermes again to review the generated profile and produce demo talking points.',
+    panelTitle: 'LLM review',
+    panelBody: 'Hermes inspects the generated files and writes an honest quality review for the demo.',
+    artifact: 'docs/llm-quality-review.md'
   }
 ];
 
@@ -101,6 +105,8 @@ async function startGeneration() {
   appWindow.classList.add('is-working');
   workbench.hidden = false;
   results.hidden = true;
+  filePreview.hidden = true;
+  filePreviewContent.textContent = '';
   errorBox.hidden = true;
   generate.disabled = true;
   inputEcho.textContent = value;
@@ -109,8 +115,7 @@ async function startGeneration() {
   statusDot.className = 'status-dot';
   activeStage = 0;
   renderScaffold();
-  tickStages();
-  stageTimer = setInterval(tickStages, 2200);
+  renderActivity(['Submitting job']);
 
   try {
     const response = await fetch('/api/jobs', {
@@ -141,6 +146,7 @@ async function poll(url) {
 }
 
 function renderJob(job) {
+  renderActivity(job.progress || []);
   if (job.status === 'queued') {
     statusLabel.textContent = 'Queued';
     return;
@@ -169,6 +175,10 @@ function tickStages() {
     activeStage += 1;
     renderScaffold();
   }
+}
+
+function renderActivity(items) {
+  activityLog.innerHTML = items.slice(-8).map(item => `<div>${escapeHtml(item)}</div>`).join('');
 }
 
 function renderScaffold() {
@@ -208,10 +218,15 @@ function renderResults(result) {
       <span>${escapeHtml(check)}</span>
     </div>`).join('');
   generatedFiles.innerHTML = (result.generated_files || []).map(file => `
-    <div class="file-row">
+    <button class="file-row" type="button" data-url="${escapeAttr(file.url || '')}" data-path="${escapeAttr(file.path || file)}">
       <span>${escapeHtml(file.path || file)}</span>
       <small>${escapeHtml(file.role || '')}</small>
-    </div>`).join('');
+    </button>`).join('');
+  generatedFiles.querySelectorAll('.file-row').forEach(button => {
+    button.addEventListener('click', () => loadFilePreview(button.dataset.url, button.dataset.path));
+  });
+  const firstFile = result.generated_files && result.generated_files[0];
+  if (firstFile && firstFile.url) loadFilePreview(firstFile.url, firstFile.path);
   downloadZip.href = result.zip_url;
   playDemo.href = result.demo_url;
   openDemoInline.href = result.demo_url;
@@ -223,6 +238,23 @@ function renderResults(result) {
   results.hidden = false;
 }
 
+async function loadFilePreview(url, path) {
+  if (!url) return;
+  filePreview.hidden = false;
+  filePreviewTitle.textContent = `Loading ${path}`;
+  filePreviewContent.textContent = '';
+  try {
+    const response = await fetch(url);
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.error || 'failed to load file');
+    filePreviewTitle.textContent = payload.path + (payload.truncated ? ' (truncated)' : '');
+    filePreviewContent.textContent = payload.content;
+  } catch (err) {
+    filePreviewTitle.textContent = path || 'File preview';
+    filePreviewContent.textContent = err.message || String(err);
+  }
+}
+
 function resetExperience() {
   clearInterval(stageTimer);
   currentStatusUrl = null;
@@ -230,12 +262,15 @@ function resetExperience() {
   appWindow.classList.remove('is-working');
   workbench.hidden = true;
   results.hidden = true;
+  filePreview.hidden = true;
+  filePreviewContent.textContent = '';
   errorBox.hidden = true;
   generate.disabled = false;
   statusDot.className = 'status-dot';
   statusLabel.textContent = 'Waiting';
   headline.textContent = 'Building your Hermes profile';
   renderScaffold();
+  renderActivity([]);
   setTimeout(() => {
     sentence.focus();
     sentence.select();
@@ -255,8 +290,12 @@ function normalizeSentence(value) {
   return value.trim();
 }
 
+function escapeAttr(value) {
+  return escapeHtml(value).replace(/`/g, '&#96;');
+}
+
 function escapeHtml(value) {
-  return String(value).replace(/[&<>'"]/g, char => ({
+  return String(value).replace(/[&<>'\"]/g, char => ({
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',

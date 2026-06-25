@@ -2,6 +2,13 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.3
+
+- Added real Hermes LLM calls to the local web demo pipeline: one call expands the sentence into a mature profile prompt, another reviews generated profile quality.
+- Split backend work into explicit status stages so the UI receives snappier progress updates instead of jumping from start to finish.
+- Added inline generated-file preview endpoints and clickable file rows in the web UI, so users can inspect files without downloading the zip.
+- Added `--profile-prompt-file` support to `scripts/generate_from_sentence.py` so Hermes-refined prompts can drive deterministic repo generation.
+
 ## 0.6.2
 
 - Fixed local web demo layout collisions by separating the prompt pane, status rail, and detail workbench columns.

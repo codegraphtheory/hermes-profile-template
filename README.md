@@ -107,7 +107,7 @@ Then open:
 http://127.0.0.1:8765
 ```
 
-The page starts as a single sentence text box. During generation it transforms into a fullscreen workbench that progressively reveals the mature prompt, params, repository files, demo, diagram, validation, and downloadable package. The result view includes quality checks, a generated-file summary, and an embedded playable demo so viewers can see the profile behavior without leaving the window.
+The page starts as a single sentence text box. During generation it transforms into a fullscreen workbench that progressively reveals the Hermes prompt-engineering pass, params, repository files, demo, diagram, validation, and Hermes quality review. The result view includes quality checks, a generated-file summary, clickable inline file previews, and an embedded playable demo so viewers can inspect the profile without downloading the zip.
 
 The page lets someone type a sentence, then the backend creates:
 
