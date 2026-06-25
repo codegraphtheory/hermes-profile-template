@@ -153,6 +153,27 @@ make smoke
 
 The smoke script validates the repository, compiles Python scripts without writing bytecode, generates and validates a profile from `templates/profile.params.yaml`, and installs into a temporary `HERMES_HOME` when the Hermes CLI is available. If you do not use `make`, run `python3 scripts/validate_profile.py .` and `scripts/smoke_install.sh` directly.
 
+## Optimize for discovery
+
+Before publishing a generated profile repository, you should check that it is optimized for search and discovery on GitHub. Run the discovery checker from your repository root:
+
+```bash
+make discovery-check
+```
+
+This runs `scripts/check_discovery.py`, which checks:
+- A clear, one-sentence description in `distribution.yaml` and `github-repo-metadata.yaml`.
+- The installation command is clearly visible near the top of `README.md`.
+- Recommended topics (`hermes-agent`, `ai-agents`, `agent-profile`, `profile-distribution`) and domain-specific topics are added to `github-repo-metadata.yaml`.
+- Domain keywords from the profile name or description appear in `README.md` headings.
+- Template lineage metadata and license/security guidelines are present.
+
+You can automatically apply safe, mechanical fixes (such as generating missing YAML metadata, adding recommended topics, or writing default security docs) by running:
+
+```bash
+python3 scripts/check_discovery.py --fix
+```
+
 
 ## Release discipline
 

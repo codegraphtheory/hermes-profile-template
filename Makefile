@@ -1,4 +1,4 @@
-.PHONY: deps validate compile generate-smoke smoke release-check clean
+.PHONY: deps validate compile generate-smoke smoke release-check clean discovery-check
 
 PYTHON ?= python3
 BASE ?= origin/main
@@ -9,6 +9,7 @@ deps:
 
 validate:
 	$(PYTHON) scripts/validate_profile.py .
+	$(PYTHON) scripts/check_discovery.py
 
 compile:
 	PYTHONDONTWRITEBYTECODE=1 $(PYTHON) -m py_compile scripts/*.py
@@ -23,6 +24,9 @@ smoke:
 
 release-check:
 	$(PYTHON) scripts/release_readiness.py --base $(BASE)
+
+discovery-check:
+	$(PYTHON) scripts/check_discovery.py
 
 clean:
 	rm -rf $(GEN_ROOT) .pytest_cache .mypy_cache .ruff_cache htmlcov dist build
