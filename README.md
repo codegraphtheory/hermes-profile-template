@@ -254,6 +254,38 @@ make smoke
 
 The smoke script validates the repository, compiles Python scripts without writing bytecode, generates and validates a profile from `templates/profile.params.yaml`, and installs into a temporary `HERMES_HOME` when the Hermes CLI is available.
 
+For a shareable publishability summary, run the quality scorecard:
+
+```bash
+make scorecard
+python3 scripts/profile_scorecard.py . --json
+python3 scripts/profile_scorecard.py . --markdown
+```
+
+The scorecard keeps hard validation failures separate from advisory warnings. Its JSON output is deterministic for CI and PR comments:
+
+```json
+{
+  "schema_version": "hermes-profile-scorecard/v0.1",
+  "profile": {
+    "name": "your-profile",
+    "version": "0.1.0",
+    "description": "..."
+  },
+  "summary": {
+    "status": "pass",
+    "total_checks": 8,
+    "passed": 8,
+    "warnings": 0,
+    "hard_failures": 0,
+    "hard_failure_details": 0
+  },
+  "checks": []
+}
+```
+
+Warnings do not make the command fail. Hard failures mirror the existing validator, so `scripts/profile_scorecard.py` returns nonzero only when `scripts/validate_profile.py` would report a distribution problem.
+
 ## Publication path
 
 From the generated profile directory:

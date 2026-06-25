@@ -2,6 +2,12 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.0
+
+- Added `scripts/profile_scorecard.py` for deterministic terminal, JSON, and Markdown publishability scorecards.
+- Added a `make scorecard` shortcut and README documentation for scorecard usage and JSON shape.
+- Added unit coverage for scorecard pass, advisory warning, hard failure, JSON, and Markdown paths.
+
 ## 0.5.0
 
 - Added a bundled `prompt-engineering` skill that expands a simple profile idea into a mature Hermes profile prompt and generation brief.
