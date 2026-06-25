@@ -30,11 +30,14 @@ def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def load_yaml_file(path: Path) -> dict[str, Any]:
+def load_yaml_file(path: Path) -> tuple[dict[str, Any], str]:
     if not path.exists():
-        return {}
-    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    return data if isinstance(data, dict) else {}
+        return {}, ""
+    try:
+        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    except Exception as exc:
+        return {}, f"Invalid YAML in {path.name}: {exc}"
+    return data if isinstance(data, dict) else {}, ""
 
 
 def check_result(
@@ -195,7 +198,17 @@ def env_example_check(root: Path, manifest: dict[str, Any]) -> dict[str, Any]:
 
 
 def metadata_topics_check(root: Path) -> dict[str, Any]:
-    data = load_yaml_file(root / "github-repo-metadata.yaml")
+    data, error = load_yaml_file(root / "github-repo-metadata.yaml")
+    if error:
+        return check_result(
+            "metadata.github_topics",
+            "GitHub metadata topics",
+            "advisory",
+            "warning",
+            "GitHub metadata YAML could not be parsed.",
+            "Fix github-repo-metadata.yaml so discovery topics can be checked.",
+            [error],
+        )
     topics = data.get("topics") if isinstance(data, dict) else []
     topic_set = {str(topic).strip() for topic in topics or []}
     missing = sorted(RECOMMENDED_TOPICS - topic_set)
@@ -266,7 +279,7 @@ def profile_summary(manifest: dict[str, Any]) -> dict[str, str]:
 
 def build_scorecard(root: Path) -> dict[str, Any]:
     root = root.resolve()
-    manifest = load_yaml_file(root / "distribution.yaml")
+    manifest, _manifest_error = load_yaml_file(root / "distribution.yaml")
     checks = [
         run_existing_validator(root),
         readme_install_check(root),

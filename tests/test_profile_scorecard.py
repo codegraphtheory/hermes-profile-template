@@ -133,6 +133,29 @@ class ProfileScorecardTest(unittest.TestCase):
         self.assertEqual(check["status"], "warning")
         self.assertEqual(profile_scorecard.exit_code(scorecard), 0)
 
+    def test_invalid_manifest_yaml_reports_hard_failure_without_crashing(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            make_profile(root)
+            write(root / "distribution.yaml", "name: [broken")
+            scorecard = profile_scorecard.build_scorecard(root)
+            rendered = profile_scorecard.render_json(scorecard)
+        self.assertEqual(scorecard["summary"]["status"], "fail")
+        self.assertEqual(profile_scorecard.exit_code(scorecard), 1)
+        self.assertIn("Invalid YAML in", rendered)
+
+    def test_invalid_github_metadata_yaml_reports_warning_without_crashing(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            make_profile(root)
+            write(root / "github-repo-metadata.yaml", "topics: [broken")
+            scorecard = profile_scorecard.build_scorecard(root)
+            rendered = profile_scorecard.render_markdown(scorecard)
+        check = next(item for item in scorecard["checks"] if item["id"] == "metadata.github_topics")
+        self.assertEqual(check["status"], "warning")
+        self.assertEqual(profile_scorecard.exit_code(scorecard), 0)
+        self.assertIn("GitHub metadata YAML could not be parsed", rendered)
+
     def test_json_output_is_deterministic(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
