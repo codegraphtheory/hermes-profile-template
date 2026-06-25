@@ -2,6 +2,13 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.5
+
+- Added a Markdown release readiness report for version, validation, generation, install smoke, and README install-command checks.
+- Updated `make release-check` to run the readiness report while preserving version-discipline enforcement.
+- Documented when to run release readiness before tagging or opening release PRs.
+- Fixed generated-profile validation to use the current Python interpreter during generation smoke checks.
+
 ## 0.6.4
 
 - Fixed live Hermes profile evaluation so generated agents run from the generated profile directory instead of inheriting the template author's repo context.

@@ -369,7 +369,15 @@ For any change that affects profile behavior, generated files, config, docs, ski
 make release-check
 ```
 
-The GitHub Actions release guard enforces this on pull requests.
+`make release-check` now emits a Markdown release readiness report that covers version discipline, profile validation, generated-profile smoke, install smoke when the Hermes CLI is available, and README install-command coverage.
+
+To write the same report to a file for release notes or a pull request comment:
+
+```bash
+python3 scripts/release_readiness.py --base origin/main --output release-readiness.md
+```
+
+Run this before tagging, before release PRs, and any time release-relevant files change. The GitHub Actions release guard enforces this on pull requests.
 
 ## Demo script
 

@@ -1,4 +1,4 @@
-.PHONY: deps validate compile generate-smoke sentence-smoke smoke web-demo release-check clean
+.PHONY: deps validate compile generate-smoke sentence-smoke smoke web-demo release-check release-readiness clean
 
 PYTHON ?= python3
 BASE ?= origin/main
@@ -30,7 +30,10 @@ smoke:
 	scripts/smoke_install.sh
 
 release-check:
-	$(PYTHON) scripts/check_release_version.py --base $(BASE)
+	$(PYTHON) scripts/release_readiness.py --base $(BASE)
+
+release-readiness:
+	$(PYTHON) scripts/release_readiness.py --base $(BASE)
 
 clean:
 	rm -rf $(GEN_ROOT) .pytest_cache .mypy_cache .ruff_cache htmlcov dist build
