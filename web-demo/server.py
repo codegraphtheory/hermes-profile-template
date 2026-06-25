@@ -48,7 +48,12 @@ def run_job(job_id: str, sentence: str) -> None:
     output = job_dir / "profile"
     artifacts = job_dir / "artifacts"
     job_dir.mkdir(parents=True, exist_ok=True)
-    set_job(job_id, status="running", progress=["Expanding sentence into a mature profile prompt"])
+    set_job(
+        job_id,
+        status="running",
+        stage_index=0,
+        progress=["Expanding sentence into a mature profile prompt"],
+    )
     cmd = [
         sys.executable,
         str(ROOT / "scripts" / "generate_from_sentence.py"),
@@ -62,7 +67,15 @@ def run_job(job_id: str, sentence: str) -> None:
         "--json",
     ]
     try:
-        set_job(job_id, progress=["Generating profile repository", "Rendering demo and diagram", "Running validation"])
+        set_job(
+            job_id,
+            stage_index=2,
+            progress=[
+                "Generating profile repository",
+                "Rendering playable demo and contents diagram",
+                "Running validation and packaging download",
+            ],
+        )
         proc = subprocess.run(cmd, cwd=ROOT, text=True, capture_output=True, timeout=180)
         raw = proc.stdout.strip()
         payload = json.loads(raw[raw.find("{"):]) if "{" in raw else {}

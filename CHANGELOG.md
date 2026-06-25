@@ -2,6 +2,13 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.1
+
+- Redesigned the local web demo into a fixed fullscreen windowpane experience.
+- Replaced the marketing-style landing page with a single sentence text box as the initial state.
+- Added progressive workbench panels that unveil prompt, params, repo, demo, diagram, validation, and package details as generation runs.
+- Added richer job status metadata for the frontend while keeping the backend local and standard-library based.
+
 ## 0.6.0
 
 - Added `scripts/generate_from_sentence.py`, a deterministic local backend entrypoint that turns one sentence into an installable Hermes profile repo.
