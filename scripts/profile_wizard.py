@@ -19,8 +19,11 @@ DEFAULT_OUTPUT = Path("profile.params.yaml")
 
 def load_yaml(path: Path) -> dict:
     if not path.exists():
-        return {}
-    return yaml.safe_load(path.read_text()) or {}
+        raise FileNotFoundError(f"Wizard config not found: {path}")
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError(f"Wizard config must be a YAML mapping: {path}")
+    return data
 
 
 def list_choices(items: list[dict], key: str = "slug") -> list[str]:
@@ -97,7 +100,9 @@ def build_params(archetype: dict, bundle: dict | None) -> dict:
     return params
 
 
-def write_params(path: Path, params: dict) -> None:
+def write_params(path: Path, params: dict, *, force: bool = False) -> None:
+    if path.exists() and not force:
+        raise SystemExit(f"Refusing to overwrite {path}. Re-run with --force or choose --output.")
     path.parent.mkdir(parents=True, exist_ok=True)
     yaml.safe_dump(
         params,
@@ -108,15 +113,17 @@ def write_params(path: Path, params: dict) -> None:
     )
 
 
-def try_write_params(path: Path, params: dict) -> None:
+def try_write_params(path: Path, params: dict, *, force: bool = False) -> None:
     try:
-        write_params(path, params)
+        write_params(path, params, force=force)
         print(f"\nWrote {path}")
+    except SystemExit:
+        raise
     except Exception as exc:  # noqa: BLE001
         raise SystemExit(f"Failed to write {path}: {exc}")
 
 
-def run_wizard(classes_path: Path, bundles_path: Path, output_path: Path) -> int:
+def run_wizard(classes_path: Path, bundles_path: Path, output_path: Path, *, force: bool = False) -> int:
     if not classes_path.exists():
         raise SystemExit(f"Missing classes config: {classes_path}")
     classes = load_yaml(classes_path).get("classes", [])
@@ -145,7 +152,7 @@ def run_wizard(classes_path: Path, bundles_path: Path, output_path: Path) -> int
         return 0
 
     params = build_params(archetype, bundle)
-    try_write_params(output_path, params)
+    try_write_params(output_path, params, force=force)
     return 0
 
 
@@ -155,6 +162,7 @@ def main() -> int:
     parser.add_argument("--bundles", default=str(DEFAULT_BUNDLES))
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT))
     parser.add_argument("--non-interactive", action="store_true", help="Skip prompts and use defaults")
+    parser.add_argument("--force", action="store_true", help="Overwrite output file if it exists")
     args = parser.parse_args()
 
     if args.non_interactive:
@@ -181,10 +189,10 @@ def main() -> int:
             "output_contract": [],
             "github_topics": [],
         }
-        try_write_params(Path(args.output), params)
+        try_write_params(Path(args.output), params, force=args.force)
         return 0
 
-    return run_wizard(Path(args.classes), Path(args.bundles), Path(args.output))
+    return run_wizard(Path(args.classes), Path(args.bundles), Path(args.output), force=args.force)
 
 
 if __name__ == "__main__":

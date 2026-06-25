@@ -253,6 +253,12 @@ The wizard reads class and bundle definitions from `templates/wizard/classes.yam
 python3 scripts/profile_wizard.py --non-interactive
 ```
 
+To write to a custom path or overwrite an existing params file:
+
+```bash
+python3 scripts/profile_wizard.py --output my-profile.yaml --force
+```
+
 You can then generate from the params file with:
 
 ```bash
