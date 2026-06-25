@@ -282,6 +282,29 @@ hermes profile install . --name your-profile-local --yes
 
 GitHub native template lineage only exists when the repository is created through the template flow. For generated repos created another way, this template records explicit lineage in `distribution.yaml`, `.github/template-source.yml`, and README text.
 
+## Profile wizard
+
+The wizard is the beginner-friendly path to creating a new profile. It guides you through each parameter interactively and writes a ready-to-use `profile.params.yaml`.
+
+```bash
+# Interactive mode — prompts for each field
+python3 scripts/profile_wizard.py
+
+# Non-interactive / CI mode — all flags
+python3 scripts/profile_wizard.py \
+    --name my-agent \
+    --display-name "My Agent" \
+    --description "Does useful things." \
+    --author "Alice" \
+    --params-out my-agent.params.yaml \
+    --no-generate
+
+# Write params and immediately run the generator
+python3 scripts/profile_wizard.py --name my-agent --output-dir /tmp/my-agent
+```
+
+The wizard writes a deterministic params file then calls `scripts/generate_profile.py`. Pass `--no-generate` to write the params file only and get the next command to run.
+
 ## Quality scorecard
 
 The scorecard gives a richer quality signal beyond hard pass/fail validation. It checks readability, discoverability, and completeness across ten dimensions and produces terminal, JSON, or Markdown output.
