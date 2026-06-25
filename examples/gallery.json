@@ -1,0 +1,58 @@
+{
+  "schema_version": "hermes-profile-examples/v0.1",
+  "examples": [
+    {
+      "name": "security-reviewer",
+      "path": "examples/security-reviewer",
+      "use_case": "Reviews code and architecture changes for application security risk before production.",
+      "install_command": "hermes profile install github.com/YOUR_ORG/security-reviewer --alias",
+      "validation_command": "python3 scripts/validate_profile.py examples/security-reviewer",
+      "keywords": [
+        "security",
+        "security review",
+        "application security",
+        "code review"
+      ]
+    },
+    {
+      "name": "database-migration-reviewer",
+      "path": "examples/database-migration-reviewer",
+      "use_case": "Reviews SQL migrations for deploy safety, rollback readiness, locks, and data-loss risk.",
+      "install_command": "hermes profile install github.com/YOUR_ORG/database-migration-reviewer --alias",
+      "validation_command": "python3 scripts/validate_profile.py examples/database-migration-reviewer",
+      "keywords": [
+        "database",
+        "migrations",
+        "SQL",
+        "rollback",
+        "deploy safety"
+      ]
+    },
+    {
+      "name": "release-manager",
+      "path": "examples/release-manager",
+      "use_case": "Coordinates release readiness, changelog discipline, smoke validation, and rollout notes.",
+      "install_command": "hermes profile install github.com/YOUR_ORG/release-manager --alias",
+      "validation_command": "python3 scripts/validate_profile.py examples/release-manager",
+      "keywords": [
+        "release management",
+        "CI",
+        "changelog",
+        "smoke testing"
+      ]
+    },
+    {
+      "name": "research-assistant",
+      "path": "examples/research-assistant",
+      "use_case": "Builds source-indexed research briefs with uncertainty labels and reusable handoff notes.",
+      "install_command": "hermes profile install github.com/YOUR_ORG/research-assistant --alias",
+      "validation_command": "python3 scripts/validate_profile.py examples/research-assistant",
+      "keywords": [
+        "research",
+        "knowledge management",
+        "documentation",
+        "analysis"
+      ]
+    }
+  ]
+}

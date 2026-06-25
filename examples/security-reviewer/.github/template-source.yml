@@ -1,0 +1,8 @@
+template:
+  name: codegraphtheory/hermes-profile-template
+  url: https://github.com/codegraphtheory/hermes-profile-template
+  relationship: generated-from-template
+notes:
+- GitHub native generated-from-template linkage is only available when a repository
+  is created through GitHub's template flow.
+- This file records template lineage explicitly for humans and automation.

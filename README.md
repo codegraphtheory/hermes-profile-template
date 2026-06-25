@@ -120,6 +120,17 @@ The page lets someone type a sentence, then the backend creates:
 
 The local API is intentionally simple and demo-focused. It runs jobs under `/tmp/hermes-profile-web-demo-jobs` and uses only local files. Do not expose it directly to the public internet without adding authentication, quotas, sandboxing, and abuse controls.
 
+## Examples gallery
+
+See [`examples/`](examples/) for complete generated profiles, including:
+
+- `security-reviewer`
+- `database-migration-reviewer`
+- `release-manager`
+- `research-assistant`
+
+Each example includes the params used to generate it, a domain-specific README, install commands, validation commands, and no secrets or runtime state.
+
 ## Usage paths
 
 Every path below ends in the same contract: a directory that passes validation and can be installed with `hermes profile install`.

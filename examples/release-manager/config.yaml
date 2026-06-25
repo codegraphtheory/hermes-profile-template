@@ -1,0 +1,27 @@
+model:
+  provider: openrouter
+  model: anthropic/claude-sonnet-4
+toolsets:
+- file
+- terminal
+- skills
+- web
+- session_search
+- clarify
+agent:
+  max_turns: 90
+  tool_use_enforcement: true
+terminal:
+  backend: local
+  cwd: .
+compression:
+  enabled: true
+display:
+  tool_progress: true
+memory:
+  memory_enabled: true
+  user_profile_enabled: true
+security:
+  redact_secrets: true
+approvals:
+  mode: manual

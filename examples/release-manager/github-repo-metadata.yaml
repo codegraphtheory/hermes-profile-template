@@ -1,0 +1,12 @@
+description: Coordinates release readiness checks, changelog discipline, smoke validation,
+  and rollout notes.
+homepage: ''
+topics:
+- hermes-agent
+- ai-agents
+- agent-profile
+- profile-distribution
+- release-management
+- ci
+- changelog
+- developer-tools

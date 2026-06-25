@@ -2,6 +2,12 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.4
+
+- Added a generated examples gallery with security, database migration, release management, and research assistant profiles.
+- Added source params and searchable gallery metadata for the generated examples.
+- Linked the examples gallery from the README as repo-scoped discovery and documentation assets.
+
 ## 0.6.3
 
 - Added real Hermes LLM calls to the local web demo pipeline: one call expands the sentence into a mature profile prompt, another reviews generated profile quality.
