@@ -1,0 +1,94 @@
+name: Validate Hermes profile distribution
+description: Validate a Hermes profile repository without requiring secrets or paid GitHub features.
+
+inputs:
+  python-command:
+    description: Python executable to use.
+    required: false
+    default: python
+  install-dependencies:
+    description: Install requirements.txt when present.
+    required: false
+    default: "true"
+  validate-command:
+    description: Profile validation command.
+    required: false
+    default: python scripts/validate_profile.py .
+  compile-scripts:
+    description: Compile scripts/*.py when present.
+    required: false
+    default: "true"
+  generator-smoke:
+    description: Generate and validate a profile from templates/profile.params.yaml when generator files are present.
+    required: false
+    default: "true"
+  install-smoke:
+    description: Run scripts/smoke_install.sh when present. The script skips Hermes install when Hermes CLI is unavailable.
+    required: false
+    default: "false"
+  generated-output-dir:
+    description: Temporary output directory for generator smoke.
+    required: false
+    default: /tmp/hermes-profile-action-generated
+
+runs:
+  using: composite
+  steps:
+    - name: Install profile validation dependencies
+      if: ${{ inputs.install-dependencies == 'true' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ -f requirements.txt ]; then
+          "${{ inputs.python-command }}" -m pip install -r requirements.txt
+        else
+          echo "No requirements.txt found; skipping dependency install."
+        fi
+
+    - name: Compile Python scripts
+      if: ${{ inputs.compile-scripts == 'true' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        if compgen -G "scripts/*.py" >/dev/null; then
+          PYTHONDONTWRITEBYTECODE=1 "${{ inputs.python-command }}" -m py_compile scripts/*.py
+        else
+          echo "No scripts/*.py files found; skipping compile check."
+        fi
+
+    - name: Validate profile distribution
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ ! -f distribution.yaml ]; then
+          echo "distribution.yaml is missing. Run this action from the profile repository root." >&2
+          exit 1
+        fi
+        ${{ inputs.validate-command }}
+
+    - name: Generator smoke
+      if: ${{ inputs.generator-smoke == 'true' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ -f scripts/generate_profile.py ] && [ -f templates/profile.params.yaml ]; then
+          rm -rf "${{ inputs.generated-output-dir }}"
+          "${{ inputs.python-command }}" scripts/generate_profile.py \
+            --params templates/profile.params.yaml \
+            --output "${{ inputs.generated-output-dir }}"
+          "${{ inputs.python-command }}" "${{ inputs.generated-output-dir }}/scripts/validate_profile.py" \
+            "${{ inputs.generated-output-dir }}"
+        else
+          echo "Generator files not present; skipping generator smoke."
+        fi
+
+    - name: Optional install smoke
+      if: ${{ inputs.install-smoke == 'true' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ -x scripts/smoke_install.sh ]; then
+          scripts/smoke_install.sh
+        else
+          echo "scripts/smoke_install.sh is not executable or not present; skipping install smoke."
+        fi

@@ -14,6 +14,7 @@ For the boundary between Hermes core and this template, see [`docs/profile-distr
 - Validate a profile before publishing it.
 - Publish generated profiles so other users can install them from GitHub.
 - Run repeatable local quality gates through `make validate`, `make smoke`, and `make release-check`.
+- Copy a reusable GitHub Actions workflow for generated profile repositories.
 
 ## Requirements
 
@@ -153,6 +154,17 @@ make smoke
 
 The smoke script validates the repository, compiles Python scripts without writing bytecode, generates and validates a profile from `templates/profile.params.yaml`, and installs into a temporary `HERMES_HOME` when the Hermes CLI is available. If you do not use `make`, run `python3 scripts/validate_profile.py .` and `scripts/smoke_install.sh` directly.
 
+## Add GitHub Actions validation to a generated profile
+
+Generated profile repositories can use the reusable validation action without secrets:
+
+```bash
+mkdir -p .github/workflows
+cp templates/github-actions/validate-profile.yml .github/workflows/validate-profile.yml
+```
+
+The workflow runs dependency install, Python compile checks, profile validation, and generator smoke where applicable. See [`docs/github-actions-validation.md`](docs/github-actions-validation.md) for action inputs, failure messages, and the copyable workflow.
+
 
 ## Release discipline
 
@@ -200,6 +212,7 @@ Most users should start with these files:
 - `SECURITY.md`: vulnerability reporting and secret-handling policy.
 - `github-repo-metadata.yaml`: repeatable GitHub description, homepage, and topic metadata.
 - `templates/catalog/`: snippets for adding the profile to external Hermes profile catalogs without looking like a generic link drop.
+- `templates/github-actions/`: copyable CI workflow for generated profile repositories.
 
 Never commit `.env`, API keys, OAuth tokens, credentials, memories, sessions, logs, runtime databases, or private user data.
 

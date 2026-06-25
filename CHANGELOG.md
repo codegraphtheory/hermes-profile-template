@@ -2,6 +2,12 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.3.1
+
+- Added a reusable GitHub Action for profile distribution validation.
+- Added a copyable generated-profile workflow template under `templates/github-actions/`.
+- Updated repository CI to exercise the reusable validation action.
+
 ## 0.3.0
 
 - Clarified that this repository is a developer authoring system built on top of Hermes Agent's native profile distribution runtime.
