@@ -19,5 +19,7 @@ jobs:
         run: make compile
       - name: Validate repository profile distribution
         run: make validate
+      - name: Smoke-test secret-safe demo kit
+        run: make demo-smoke
       - name: Smoke-test install path
         run: make smoke

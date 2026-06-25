@@ -1,4 +1,4 @@
-.PHONY: deps validate compile generate-smoke smoke release-check clean
+.PHONY: deps validate compile generate-smoke demo-smoke smoke release-check clean
 
 PYTHON ?= python3
 BASE ?= origin/main
@@ -17,6 +17,9 @@ generate-smoke:
 	rm -rf $(GEN_ROOT)
 	$(PYTHON) scripts/generate_profile.py --params templates/profile.params.yaml --output $(GEN_ROOT)/generated
 	$(PYTHON) $(GEN_ROOT)/generated/scripts/validate_profile.py $(GEN_ROOT)/generated
+
+demo-smoke:
+	scripts/demo_smoke.sh
 
 smoke:
 	scripts/smoke_install.sh

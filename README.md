@@ -14,6 +14,7 @@ For the boundary between Hermes core and this template, see [`docs/profile-distr
 - Validate a profile before publishing it.
 - Publish generated profiles so other users can install them from GitHub.
 - Run repeatable local quality gates through `make validate`, `make smoke`, and `make release-check`.
+- Record safe terminal demos with the [`docs/demos/`](docs/demos/) demo kit.
 
 ## Requirements
 
@@ -153,6 +154,17 @@ make smoke
 
 The smoke script validates the repository, compiles Python scripts without writing bytecode, generates and validates a profile from `templates/profile.params.yaml`, and installs into a temporary `HERMES_HOME` when the Hermes CLI is available. If you do not use `make`, run `python3 scripts/validate_profile.py .` and `scripts/smoke_install.sh` directly.
 
+## Record a safe demo
+
+Use the demo kit when recording scaffold, validate, smoke, or interactive profile-builder demos:
+
+```bash
+scripts/demo_fixture.sh
+scripts/demo_smoke.sh
+```
+
+See [`docs/demos/`](docs/demos/) for copy-pasteable commands, narration scripts, cleanup, and a redaction checklist.
+
 
 ## Release discipline
 
@@ -200,6 +212,7 @@ Most users should start with these files:
 - `SECURITY.md`: vulnerability reporting and secret-handling policy.
 - `github-repo-metadata.yaml`: repeatable GitHub description, homepage, and topic metadata.
 - `templates/catalog/`: snippets for adding the profile to external Hermes profile catalogs without looking like a generic link drop.
+- `docs/demos/`: secret-safe terminal demo recipes, fixture setup, narration, and cleanup.
 
 Never commit `.env`, API keys, OAuth tokens, credentials, memories, sessions, logs, runtime databases, or private user data.
 

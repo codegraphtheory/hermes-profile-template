@@ -2,6 +2,12 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.3.1
+
+- Added a secret-safe demo kit under `docs/demos/` with two copy-pasteable demo paths and narration scripts.
+- Added demo fixture, cleanup, and smoke scripts that use temporary workspaces and temporary `HERMES_HOME` directories.
+- Added CI coverage for the demo smoke path.
+
 ## 0.3.0
 
 - Clarified that this repository is a developer authoring system built on top of Hermes Agent's native profile distribution runtime.
