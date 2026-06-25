@@ -122,13 +122,27 @@ The installed profile will use the included generator, write a starter profile, 
 
 ## Make the profile easy to discover
 
-Before publishing, prepare both the installable distribution and small catalog-native snippets:
+Before publishing, prepare both the installable distribution and small catalog-native snippets. You can automatically render these snippets (concise Markdown card, YAML manifest snippet, README line, PR body starter, and full flat-profile page) using:
 
-- Use `templates/catalog/flat-profile.md.tmpl` for profile catalogs that store one Markdown file per profile.
-- Use `templates/catalog/manifest-profile.yaml.tmpl` for manifest-driven profile kits.
+```bash
+make catalog-entry
+```
+
+Or run the script directly:
+
+```bash
+python3 scripts/render_catalog_entry.py --org YOUR_ORG
+```
+
+This reads your profile's metadata from `distribution.yaml` and applies the template replacements. You can copy the generated snippets to submit your profile to external directories, awesome lists, or catalog repositories.
+
+You can also use:
+- `templates/catalog/flat-profile.md.tmpl` for profile catalogs that store one Markdown file per profile.
+- `templates/catalog/manifest-profile.yaml.tmpl` for manifest-driven profile kits.
 - Keep catalog PRs useful in the target repo format: identity, voice, skills, triggers, constraints, and a standalone install link.
 - Add GitHub topics that cover Hermes, the domain, and installability. Good defaults are `hermes-agent`, `ai-agents`, `agent-profile`, `profile-distribution`, and one or more domain topics.
 - Keep `github-repo-metadata.yaml` current so descriptions, homepage, and topics can be applied repeatably.
+
 
 Preview metadata changes:
 

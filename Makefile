@@ -1,4 +1,4 @@
-.PHONY: deps validate compile generate-smoke smoke release-check clean
+.PHONY: deps validate compile generate-smoke smoke release-check clean catalog-entry
 
 PYTHON ?= python3
 BASE ?= origin/main
@@ -23,6 +23,9 @@ smoke:
 
 release-check:
 	$(PYTHON) scripts/release_readiness.py --base $(BASE)
+
+catalog-entry:
+	$(PYTHON) scripts/render_catalog_entry.py
 
 clean:
 	rm -rf $(GEN_ROOT) .pytest_cache .mypy_cache .ruff_cache htmlcov dist build
