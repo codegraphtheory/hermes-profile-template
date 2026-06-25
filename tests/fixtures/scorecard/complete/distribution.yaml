@@ -1,0 +1,7 @@
+name: security-reviewer
+version: 1.0.0
+description: Reviews code and architecture for security risk.
+env_requires:
+  - name: GITHUB_TOKEN
+    description: Optional token for GitHub metadata checks.
+    required: false

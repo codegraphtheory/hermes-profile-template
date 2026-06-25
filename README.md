@@ -357,6 +357,18 @@ Most generated profile repos should customize:
 
 Never commit `.env`, API keys, OAuth tokens, credentials, memories, sessions, logs, runtime databases, or private user data.
 
+## Quality scorecard
+
+Generate a shareable quality scorecard when you want advisory checks in addition to hard validation:
+
+```bash
+python3 scripts/profile_scorecard.py .
+python3 scripts/profile_scorecard.py . --json
+python3 scripts/profile_scorecard.py . --markdown
+```
+
+The scorecard reports required manifest fields, README install guidance, `.env.EXAMPLE` coverage, runtime or secret-like files, skill frontmatter, GitHub topics, license presence, changelog consistency, and install smoke documentation. It exits nonzero only for hard failures; advisory warnings keep the command successful.
+
 ## Release discipline
 
 For any change that affects profile behavior, generated files, config, docs, skills, scripts, or distribution metadata:

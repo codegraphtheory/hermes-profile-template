@@ -1,0 +1,7 @@
+name: missing-env-doc
+version: 0.1.0
+description: Demonstrates env documentation failures.
+env_requires:
+  - name: API_TOKEN
+    description: Optional token.
+    required: false
