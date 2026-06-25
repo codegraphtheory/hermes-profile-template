@@ -31,6 +31,7 @@ RELEASE_RELEVANT_PREFIXES = (
     "requirements.txt",
     "Makefile",
     "docs/",
+    "examples/",
 )
 
 IGNORED_PATHS = {
