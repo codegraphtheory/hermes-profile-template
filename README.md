@@ -379,6 +379,6 @@ Short title:
 Turn a prompt into an installable Hermes profile repo
 ```
 
-## License
+## Social Media & Share Previews\n\nFor optimal discoverability on social media and chat platforms, consider adding:\n\n-   `og:image` and `twitter:image` metadata in your `index.html` (if applicable) or by creating a `social_preview.png` image in your `.github/` directory.\n-   A clear, concise `og:description` (usually your one-sentence repo description).\n-   Consistent `og:title` that reflects your profile's purpose.\n\nThis improves how your repository appears when shared, increasing click-through rates and visibility.\n\n## License
 
 MIT. See [`LICENSE`](LICENSE).
