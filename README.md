@@ -1,3 +1,7 @@
+
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Validation workflow](https://img.shields.io/github/actions/workflow/status/codegraphtheory/hermes-profile-template/validate.yml?branch=main&label=validation)](https://github.com/codegraphtheory/hermes-profile-template/actions/workflows/validate.yml) [![Release workflow](https://img.shields.io/github/actions/workflow/status/codegraphtheory/hermes-profile-template/release.yml?branch=main&label=release)](https://github.com/codegraphtheory/hermes-profile-template/actions/workflows/release.yml) [![Latest release](https://img.shields.io/github/v/release/codegraphtheory/hermes-profile-template)](https://github.com/codegraphtheory/hermes-profile-template/releases)
+
 # Hermes Profile Template
 
 Turn a prompt into an installable Hermes profile repo.
