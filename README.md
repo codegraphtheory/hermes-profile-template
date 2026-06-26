@@ -42,6 +42,13 @@ hermes profile install github.com/codegraphtheory/hermes-profile-template \
 
 profile-architect chat
 ```
+### Repository Discovery Optimization
+
+Before publishing your generated profile repository, ensure it meets all discoverability, SEO, and quality gates by running the optimization diagnostics tool:
+
+```bash
+python3 scripts/discovery_optimizer.py .
+
 
 Paste a one-sentence idea or a product-style prompt. The installed profile will first expand the idea into a mature profile prompt, preserve that prompt in the generated repo, then generate and validate the profile.
 
