@@ -9,6 +9,7 @@ deps:
 
 validate:
 	$(PYTHON) scripts/validate_profile.py .
+	$(PYTHON) scripts/discovery_optimizer.py .
 
 test:
 	$(PYTHON) -m unittest discover -s tests
