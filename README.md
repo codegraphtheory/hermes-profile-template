@@ -8,6 +8,21 @@ Hermes Agent core provides profile isolation and distribution install/update com
 
 For the boundary between Hermes core and this template, see [`docs/profile-distribution-contract.md`](docs/profile-distribution-contract.md).
 
+## Built with this template
+
+These public Hermes profiles have verified `distribution.yaml` template lineage pointing back to this repository.
+
+| Profile | What it is | Install | Star |
+| --- | --- | --- | --- |
+| [context-forge-rag](https://github.com/codegraphtheory/context-forge-rag) | Production RAG architecture, evaluation, observability, Pinecone workflows, and implementation-ready delivery specs. | `hermes profile install github.com/codegraphtheory/context-forge-rag --alias` | [![Star context-forge-rag](https://img.shields.io/github/stars/codegraphtheory/context-forge-rag?style=social)](https://github.com/codegraphtheory/context-forge-rag/stargazers) |
+| [chainforge](https://github.com/codegraphtheory/chainforge) | Security-first blockchain architect for smart contracts, Solana, Solidity, DeFi, audits, governance, and tokenomics. | `hermes profile install github.com/codegraphtheory/chainforge --alias` | [![Star chainforge](https://img.shields.io/github/stars/codegraphtheory/chainforge?style=social)](https://github.com/codegraphtheory/chainforge/stargazers) |
+
+If you publish a profile built from this template, keep `template_source` in `distribution.yaml` so it can be added here.
+
+## Bounties and payout proof
+
+We pay contributors transparently when bounty work is accepted. See [BOUNTIES.md](BOUNTIES.md) for recorded Solana payout proof and contributor PR links.
+
 ## The literal workflow
 
 One simple sentence should become a mature agent prompt, then a real repository directory that can be installed with `hermes profile install`.
