@@ -26,6 +26,7 @@ class Item:
     points: int
     max_points: int
     detail: str
+    hard_fail: bool = False  # exit 1 when this check scores 0
 
 
 class Scorecard:
@@ -33,8 +34,8 @@ class Scorecard:
         self.root = root.resolve()
         self.items: list[Item] = []
 
-    def add(self, name: str, points: int, max_points: int, detail: str) -> None:
-        self.items.append(Item(name, points, max_points, detail))
+    def add(self, name: str, points: int, max_points: int, detail: str, *, hard_fail: bool = False) -> None:
+        self.items.append(Item(name, points, max_points, detail, hard_fail))
 
     def run(self) -> None:
         self.check_manifest()
@@ -52,7 +53,7 @@ class Scorecard:
 
     def check_manifest(self) -> None:
         data = self.manifest()
-        self.add("distribution.yaml exists", 10 if data else 0, 10, "Installable profiles need a manifest.")
+        self.add("distribution.yaml exists", 10 if data else 0, 10, "Installable profiles need a manifest.", hard_fail=True)
         name = str(data.get("name") or "")
         version = str(data.get("version") or "")
         desc = str(data.get("description") or "")
@@ -73,9 +74,11 @@ class Scorecard:
     def check_security(self) -> None:
         hits: list[str] = []
         for path in self.root.rglob("*"):
-            if ".git" in path.parts or not path.is_file():
+            if not path.is_file():
                 continue
             rel = path.relative_to(self.root)
+            if rel.parts[0] in {".git", "tests"}:
+                continue
             if path.name in RUNTIME_NAMES or set(rel.parts) & RUNTIME_PARTS:
                 hits.append(str(rel))
                 continue
@@ -87,7 +90,7 @@ class Scorecard:
                 continue
             if any(pattern.search(text) for pattern in SECRET_PATTERNS):
                 hits.append(str(rel))
-        self.add("no runtime state or token-like secrets", 14 if not hits else 0, 14, ", ".join(hits[:8]) if hits else "clean")
+        self.add("no runtime state or token-like secrets", 14 if not hits else 0, 14, ", ".join(hits[:8]) if hits else "clean", hard_fail=True)
 
     def check_quality_gates(self) -> None:
         self.add("validator script exists", 5 if (self.root / "scripts" / "validate_profile.py").exists() else 0, 5, "scripts/validate_profile.py")
@@ -119,37 +122,77 @@ class Scorecard:
     def percent(self) -> float:
         return round((self.total / self.maximum) * 100, 1) if self.maximum else 0.0
 
+    @property
+    def has_hard_failures(self) -> bool:
+        return any(item.hard_fail and item.points == 0 for item in self.items)
+
     def as_dict(self) -> dict:
-        return {"score": self.percent, "points": self.total, "max_points": self.maximum, "items": [asdict(item) for item in self.items]}
+        return {
+            "score": self.percent,
+            "points": self.total,
+            "max_points": self.maximum,
+            "hard_failures": self.has_hard_failures,
+            "items": [asdict(item) for item in self.items],
+        }
 
 
 def render_markdown(card: Scorecard) -> str:
-    lines = ["# Hermes profile scorecard", "", f"Score: {card.percent}% ({card.total}/{card.maximum})", "", "| Check | Points | Detail |", "| --- | --- | --- |"]
+    lines = [
+        "# Hermes profile scorecard",
+        "",
+        f"Score: {card.percent}% ({card.total}/{card.maximum})",
+        "",
+        "| Check | Points | Status | Detail |",
+        "| --- | --- | --- | --- |",
+    ]
     for item in card.items:
-        lines.append(f"| {item.name} | {item.points}/{item.max_points} | {item.detail.replace('|', '/')} |")
+        if item.points == item.max_points:
+            status = "PASS"
+        elif item.hard_fail and item.points == 0:
+            status = "FAIL"
+        else:
+            status = "WARN"
+        lines.append(f"| {item.name} | {item.points}/{item.max_points} | {status} | {item.detail.replace('|', '/')} |")
+    if card.has_hard_failures:
+        lines += ["", "> **Hard failures present** — fix required items before publishing."]
     return "\n".join(lines) + "\n"
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Score a Hermes profile distribution repository.")
     parser.add_argument("path", nargs="?", default=".")
-    parser.add_argument("--format", choices=["text", "json", "markdown"], default="text")
+    fmt = parser.add_mutually_exclusive_group()
+    fmt.add_argument("--json", dest="format", action="store_const", const="json", help="Output JSON")
+    fmt.add_argument("--markdown", dest="format", action="store_const", const="markdown", help="Output Markdown")
+    fmt.add_argument("--format", choices=["text", "json", "markdown"], default="text", dest="format_long")
     parser.add_argument("--threshold", type=int)
     args = parser.parse_args()
     if args.threshold is not None and not 0 <= args.threshold <= 100:
         parser.error("--threshold must be between 0 and 100")
+    fmt_choice = args.format if args.format else args.format_long
     card = Scorecard(Path(args.path))
     card.run()
-    if args.format == "json":
+    if fmt_choice == "json":
         print(json.dumps(card.as_dict(), indent=2, sort_keys=True))
-    elif args.format == "markdown":
+    elif fmt_choice == "markdown":
         print(render_markdown(card), end="")
     else:
         print(f"Hermes profile scorecard: {card.percent}% ({card.total}/{card.maximum})")
         for item in card.items:
-            status = "PASS" if item.points == item.max_points else "WARN" if item.points else "FAIL"
+            if item.points == item.max_points:
+                status = "PASS"
+            elif item.hard_fail and item.points == 0:
+                status = "FAIL"
+            else:
+                status = "WARN"
             print(f"[{status}] {item.name}: {item.points}/{item.max_points} - {item.detail}")
-    return 1 if args.threshold is not None and card.percent < args.threshold else 0
+        if card.has_hard_failures:
+            print("\nHard failures present — fix required items before publishing.")
+    if card.has_hard_failures:
+        return 1
+    if args.threshold is not None and card.percent < args.threshold:
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

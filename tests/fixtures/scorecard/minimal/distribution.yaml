@@ -1,0 +1,5 @@
+name: minimal-profile
+version: 0.1.0
+description: "Minimal profile fixture for scorecard warning path tests."
+hermes_requires: ">=0.12.0"
+author: "Tester"

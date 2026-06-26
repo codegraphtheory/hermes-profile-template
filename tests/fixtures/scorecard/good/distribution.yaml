@@ -1,0 +1,10 @@
+name: example-profile
+version: 1.0.0
+description: "A well-formed example Hermes profile for scorecard testing purposes."
+hermes_requires: ">=0.12.0"
+author: "Example Author"
+license: "MIT"
+env_requires:
+  - name: OPENROUTER_API_KEY
+    description: "API key for the model provider."
+    required: false

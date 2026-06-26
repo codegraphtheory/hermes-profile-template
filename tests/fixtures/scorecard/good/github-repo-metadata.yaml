@@ -1,0 +1,6 @@
+name: example-profile
+description: "A well-formed example Hermes profile."
+topics:
+  - hermes-agent
+  - profile-distribution
+  - example
