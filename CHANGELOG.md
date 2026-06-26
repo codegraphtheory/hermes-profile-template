@@ -2,6 +2,10 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.6
+
+- Enhanced `scripts/release_readiness.py` with three additional checks: docs install command presence, generated profile smoke (via `--smoke` flag), and Hermes CLI install smoke (via `--smoke`, skipped when CLI unavailable).
+
 ## 0.6.5
 
 - Integrated community contributor toolkit: release readiness, scorecard, discovery, wizard, demo, catalog, examples, and reusable validation action.

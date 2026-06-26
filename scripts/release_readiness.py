@@ -123,6 +123,93 @@ def check_changelog(root: Path) -> CheckResult:
     return CheckResult("changelog", "FAIL", f"Missing CHANGELOG.md heading for {version}.")
 
 
+def check_docs_install_command(root: Path) -> CheckResult:
+    """Verify README contains a hermes profile install command."""
+    readme = root / "README.md"
+    if not readme.exists():
+        return CheckResult("docs-install-command", "FAIL", "README.md not found.",
+                           "Create README.md with a hermes profile install command near the top.")
+    text = readme.read_text(encoding="utf-8", errors="replace")
+    top = "\n".join(text.splitlines()[:80])
+    if re.search(r"hermes profile install", top, re.IGNORECASE):
+        return CheckResult("docs-install-command", "PASS",
+                           "README contains hermes profile install command.")
+    if re.search(r"hermes profile install", text, re.IGNORECASE):
+        return CheckResult("docs-install-command", "WARN",
+                           "Install command found but not in first 80 lines — move it closer to the top.",
+                           "Put the install command in the first visible section of README.md.")
+    return CheckResult("docs-install-command", "FAIL",
+                       "README is missing a hermes profile install command.",
+                       "Add: hermes profile install github.com/YOUR_ORG/YOUR_REPO")
+
+
+def check_generate_smoke(root: Path) -> CheckResult:
+    """Run generate_profile.py and validate the output — skipped when generator is absent."""
+    generator = root / "scripts" / "generate_profile.py"
+    params = root / "templates" / "profile.params.yaml"
+    if not generator.exists():
+        return CheckResult("generate-smoke", "SKIP", "scripts/generate_profile.py not found.")
+    if not params.exists():
+        return CheckResult("generate-smoke", "SKIP", "templates/profile.params.yaml not found.")
+
+    import tempfile, shutil
+    tmp = Path(tempfile.mkdtemp(prefix="hermes-release-smoke-"))
+    try:
+        gen_proc = subprocess.run(
+            [sys.executable, str(generator), "--params", str(params), "--output", str(tmp / "out")],
+            cwd=root, text=True, capture_output=True, timeout=120,
+        )
+        if gen_proc.returncode != 0:
+            detail = (gen_proc.stdout + gen_proc.stderr).strip()[-400:]
+            return CheckResult("generate-smoke", "FAIL",
+                               f"generate_profile.py exited {gen_proc.returncode}: {detail}",
+                               "Run make generate-smoke locally to reproduce.")
+
+        validator = tmp / "out" / "scripts" / "validate_profile.py"
+        if not validator.exists():
+            validator = root / "scripts" / "validate_profile.py"
+        val_proc = subprocess.run(
+            [sys.executable, str(validator), str(tmp / "out")],
+            cwd=root, text=True, capture_output=True, timeout=30,
+        )
+        if val_proc.returncode != 0:
+            detail = (val_proc.stdout + val_proc.stderr).strip()[-400:]
+            return CheckResult("generate-smoke", "FAIL",
+                               f"Generated profile failed validation: {detail}",
+                               "Run make generate-smoke locally to reproduce.")
+
+        return CheckResult("generate-smoke", "PASS",
+                           "generate_profile.py produced a valid profile distribution.")
+    except subprocess.TimeoutExpired:
+        return CheckResult("generate-smoke", "FAIL", "generate_profile.py timed out after 120s.")
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def check_install_smoke(root: Path) -> CheckResult:
+    """Run smoke_install.sh if the Hermes CLI is available; skip otherwise."""
+    smoke_sh = root / "scripts" / "smoke_install.sh"
+    if not smoke_sh.exists():
+        return CheckResult("install-smoke", "SKIP", "scripts/smoke_install.sh not found.")
+
+    hermes = subprocess.run(["which", "hermes"], text=True, capture_output=True)
+    if hermes.returncode != 0:
+        return CheckResult("install-smoke", "SKIP",
+                           "Hermes CLI not found on PATH — skipping install smoke.",
+                           "Install Hermes CLI to enable full install smoke validation.")
+
+    proc = subprocess.run(
+        ["bash", str(smoke_sh)],
+        cwd=root, text=True, capture_output=True, timeout=180,
+    )
+    detail = (proc.stdout + proc.stderr).strip().splitlines()[-15:]
+    joined = "\n".join(detail) if detail else "no output"
+    if proc.returncode == 0:
+        return CheckResult("install-smoke", "PASS", joined)
+    return CheckResult("install-smoke", "FAIL", joined,
+                       "Run make smoke locally to reproduce the install failure.")
+
+
 def check_command(root: Path, name: str, cmd: list[str]) -> CheckResult:
     proc = subprocess.run(cmd, cwd=root, text=True, capture_output=True)
     detail = (proc.stdout + proc.stderr).strip().splitlines()[-12:]
@@ -166,17 +253,24 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Check release readiness for this Hermes profile distribution.")
     parser.add_argument("--base", default="origin/main", help="Base ref for version discipline checks.")
     parser.add_argument("--strict", action="store_true", help="Fail instead of skipping when the base ref is unavailable.")
+    parser.add_argument("--smoke", action="store_true", help="Run generate smoke and install smoke checks (slower).")
     args = parser.parse_args()
     root = Path.cwd()
     results = [
         check_version(root, args.base, args.strict),
         check_changelog(root),
+        check_docs_install_command(root),
         check_command(root, "profile-validation", [sys.executable, "scripts/validate_profile.py", "."]),
         check_command(root, "python-compile", [sys.executable, "-m", "py_compile", *[str(p) for p in sorted((root / "scripts").glob("*.py"))]]),
         check_runtime_and_secrets(root),
     ]
+    if args.smoke:
+        results += [
+            check_generate_smoke(root),
+            check_install_smoke(root),
+        ]
     print(markdown_report(results))
-    return 0 if all(result.status in {"PASS", "SKIP"} for result in results) else 1
+    return 0 if all(result.status in {"PASS", "SKIP", "WARN"} for result in results) else 1
 
 
 if __name__ == "__main__":
