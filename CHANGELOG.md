@@ -2,6 +2,10 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.6
+
+- Added safe demo kit with shell fixture and cleanup helpers, two step-by-step demo guides with copy-pasteable commands and voiceover notes, and asciinema recording instructions.
+
 ## 0.6.5
 
 - Integrated community contributor toolkit: release readiness, scorecard, discovery, wizard, demo, catalog, examples, and reusable validation action.

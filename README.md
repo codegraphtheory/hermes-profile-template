@@ -154,6 +154,7 @@ Included tools:
 - `scripts/discovery_optimizer.py`: GitHub metadata and README discovery checks.
 - `scripts/render_catalog_entry.py`: catalog-ready Markdown, YAML, and PR-body snippets.
 - `scripts/demo_fixture.py`: safe temporary demo workspaces with runtime-state checks.
+- `scripts/demo_fixture.sh` / `scripts/demo_cleanup.sh`: shell helpers for isolated recording sessions. See [`docs/demos/`](docs/demos/) for two step-by-step demo guides with copy-pasteable commands and voiceover notes.
 - `scripts/release_readiness.py`: changelog, version, validation, compile, and secret hygiene release report.
 - `.github/actions/validate-profile/action.yml`: reusable validation action for generated profile repos.
 - `examples/gallery.json`: lightweight generated-profile gallery metadata.
