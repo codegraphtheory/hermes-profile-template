@@ -1,0 +1,10 @@
+{
+  "schema_version": "hermes-profile-examples/v0.1",
+  "schema_docs": "examples/README.md",
+  "examples": [
+    {"name": "security-reviewer", "use_case": "Reviews code and architecture for application security risk.", "install_command": "hermes profile install github.com/YOUR_ORG/security-reviewer --alias", "publish_hint": "Replace YOUR_ORG before publishing.", "keywords": ["security", "code review"]},
+    {"name": "database-migration-reviewer", "use_case": "Reviews SQL migrations for rollout and rollback risk.", "install_command": "hermes profile install github.com/YOUR_ORG/database-migration-reviewer --alias", "publish_hint": "Replace YOUR_ORG before publishing.", "keywords": ["database", "migrations", "rollback"]},
+    {"name": "release-manager", "use_case": "Coordinates changelog, smoke validation, and rollout notes.", "install_command": "hermes profile install github.com/YOUR_ORG/release-manager --alias", "publish_hint": "Replace YOUR_ORG before publishing.", "keywords": ["release", "ci", "smoke testing"]},
+    {"name": "research-assistant", "use_case": "Builds source-grounded briefs with uncertainty labels.", "install_command": "hermes profile install github.com/YOUR_ORG/research-assistant --alias", "publish_hint": "Replace YOUR_ORG before publishing.", "keywords": ["research", "documentation"]}
+  ]
+}
