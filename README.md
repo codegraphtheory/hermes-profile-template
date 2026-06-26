@@ -24,6 +24,10 @@ If you publish a profile built from this template, keep `template_source` in `di
 
 We pay contributors transparently when bounty work is accepted. See [BOUNTIES.md](BOUNTIES.md) for recorded Solana payout proof and contributor PR links.
 
+## Generated profile CI
+
+See [`docs/generated-profile-ci.md`](docs/generated-profile-ci.md) for the reusable validation action and workflow template copied into generated profile repos.
+
 ## The literal workflow
 
 One simple sentence should become a mature agent prompt, then a real repository directory that can be installed with `hermes profile install`.
