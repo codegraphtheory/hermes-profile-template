@@ -1,5 +1,8 @@
 # Hermes Profile Template
 
+
+<p><strong>Docs:</strong> <a href="https://graphtheory.xyz/hermes-profile-template/">https://graphtheory.xyz/hermes-profile-template/</a></p>
+
 [![Validation](https://img.shields.io/github/actions/workflow/status/codegraphtheory/hermes-profile-template/validate.yml?branch=main&label=validation)](https://github.com/codegraphtheory/hermes-profile-template/actions/workflows/validate.yml) [![Release guard](https://img.shields.io/github/actions/workflow/status/codegraphtheory/hermes-profile-template/release-guard.yml?branch=main&label=release%20guard)](https://github.com/codegraphtheory/hermes-profile-template/actions/workflows/release-guard.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Latest release](https://img.shields.io/github/v/release/codegraphtheory/hermes-profile-template?label=latest%20release)](https://github.com/codegraphtheory/hermes-profile-template/releases)
 
 One prompt in. A complete installable Hermes Agent profile repo out.
