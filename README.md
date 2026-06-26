@@ -24,6 +24,16 @@ If you publish a profile built from this template, keep `template_source` in `di
 
 We pay contributors transparently when bounty work is accepted. See [BOUNTIES.md](BOUNTIES.md) for recorded Solana payout proof and contributor PR links.
 
+## Demo kit
+
+Record safe terminal demos with voiceover scripts and cleanup helpers: [`docs/demos/README.md`](docs/demos/README.md).
+
+```bash
+python3 scripts/demo_fixture.py . --demo generate
+python3 scripts/demo_fixture.py . --demo all
+bash scripts/demo_cleanup.sh
+```
+
 ## The literal workflow
 
 One simple sentence should become a mature agent prompt, then a real repository directory that can be installed with `hermes profile install`.
