@@ -2,6 +2,12 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.7
+
+- Added `make test` step to validate CI workflow so the test suite runs on every PR.
+- Added `make wizard-smoke` Makefile target: wizard → generate → validate in one command.
+- Expanded README wizard section to document interactive mode, all profile classes, all bundles, and the `--generate` flag.
+
 ## 0.6.6
 
 - Upgraded profile_wizard.py with full interactive mode, 5 profile classes (engineer, researcher, operator, security, data), 5 bundles, per-field overrides (--name, --display-name, --description, --author, --env-requires, --topic), --generate flag to run generator in one command, and 33-test suite covering all classes, bundles, CLI flags, and file-write edge cases.

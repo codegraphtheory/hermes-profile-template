@@ -160,10 +160,40 @@ Included tools:
 
 ### Guided profile wizard
 
+The wizard is the easiest starting point for first-time authors. Run it with no flags for a step-by-step interactive session:
+
 ```bash
-python3 scripts/profile_wizard.py --class engineer --bundle open-source --output /tmp/profile.params.yaml --force
-python3 scripts/generate_profile.py --params /tmp/profile.params.yaml --output /tmp/engineering-reviewer
-python3 /tmp/engineering-reviewer/scripts/validate_profile.py /tmp/engineering-reviewer
+python3 scripts/profile_wizard.py
+```
+
+The wizard prompts for profile name, display name, description, author, required environment variables, GitHub topics, and optional bundles. It writes a `profile.params.yaml` and prints the exact next command to run.
+
+Available profile classes: `engineer`, `researcher`, `operator`, `security`, `data`.
+Available bundles: `open-source`, `safe-demo`, `security`, `api-integration`, `database`.
+
+For CI or scripted use, pass all fields as flags (non-interactive):
+
+```bash
+python3 scripts/profile_wizard.py \
+  --class engineer \
+  --bundle open-source \
+  --name my-reviewer \
+  --output /tmp/profile.params.yaml \
+  --force
+
+python3 scripts/generate_profile.py --params /tmp/profile.params.yaml --output /tmp/my-reviewer
+python3 /tmp/my-reviewer/scripts/validate_profile.py /tmp/my-reviewer
+```
+
+To write params and generate the profile in a single command, use `--generate`:
+
+```bash
+python3 scripts/profile_wizard.py \
+  --class researcher \
+  --bundle open-source \
+  --output /tmp/params.yaml \
+  --output-dir /tmp/my-researcher \
+  --force --generate
 ```
 
 ### Scorecard and discovery checks

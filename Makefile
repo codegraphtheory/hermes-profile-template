@@ -1,4 +1,4 @@
-.PHONY: deps validate test compile generate-smoke sentence-smoke smoke web-demo release-check scorecard discovery-check demo-smoke clean
+.PHONY: deps validate test compile generate-smoke sentence-smoke smoke web-demo release-check scorecard discovery-check demo-smoke wizard-smoke clean
 
 PYTHON ?= python3
 BASE ?= origin/main
@@ -43,6 +43,12 @@ discovery-check:
 
 demo-smoke:
 	$(PYTHON) scripts/demo_fixture.py . --demo generate
+
+wizard-smoke:
+	rm -rf $(GEN_ROOT)/wizard-out
+	$(PYTHON) scripts/profile_wizard.py --class engineer --bundle open-source --output $(GEN_ROOT)/wizard.params.yaml --force
+	$(PYTHON) scripts/generate_profile.py --params $(GEN_ROOT)/wizard.params.yaml --output $(GEN_ROOT)/wizard-out
+	$(PYTHON) $(GEN_ROOT)/wizard-out/scripts/validate_profile.py $(GEN_ROOT)/wizard-out
 
 clean:
 	rm -rf $(GEN_ROOT) .pytest_cache .mypy_cache .ruff_cache htmlcov dist build
