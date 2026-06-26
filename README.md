@@ -294,10 +294,21 @@ For this template repo, run the full local gate:
 
 ```bash
 make validate
+make scorecard
 make smoke
 ```
 
 The smoke script validates the repository, compiles Python scripts without writing bytecode, generates and validates a profile from `templates/profile.params.yaml`, and installs into a temporary `HERMES_HOME` when the Hermes CLI is available.
+
+The scorecard adds a publishability and discovery-readiness layer on top of hard validation:
+
+```bash
+python3 scripts/profile_scorecard.py .
+python3 scripts/profile_scorecard.py . --json
+python3 scripts/profile_scorecard.py . --markdown
+```
+
+Advisory scorecard warnings do not fail the process. Hard failures reuse the existing validator and return nonzero. The deterministic JSON contract is documented in [`docs/profile-scorecard.md`](docs/profile-scorecard.md).
 
 ## Publication path
 

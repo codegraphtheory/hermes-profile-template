@@ -1,0 +1,21 @@
+name: sample-profile
+version: 1.0.0
+description: "A sample installable Hermes profile."
+license: MIT
+env_requires:
+  - name: SAMPLE_API_KEY
+    description: "Optional sample API key."
+    required: false
+topics:
+  - hermes-agent
+  - profile
+distribution_owned:
+  - SOUL.md
+  - README.md
+  - AGENTS.md
+  - config.yaml
+  - .env.EXAMPLE
+  - skills/
+  - name: REQUIRED_TOKEN
+description: "Required token."
+required: true

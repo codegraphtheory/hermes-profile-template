@@ -2,6 +2,12 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.4
+
+- Added `scripts/profile_scorecard.py` with terminal, deterministic JSON, and Markdown output for profile publishability checks.
+- Added `make scorecard`, documented the scorecard JSON contract, and kept advisory warnings separate from hard validation failures.
+- Added fixture coverage for complete, advisory-warning, hard-failure, runtime-file, and invalid-YAML scorecard paths.
+
 ## 0.6.3
 
 - Added real Hermes LLM calls to the local web demo pipeline: one call expands the sentence into a mature profile prompt, another reviews generated profile quality.
