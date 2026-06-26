@@ -98,9 +98,10 @@ SECURITY.md                     Secret handling and vulnerability reporting
 CHANGELOG.md                    Release history
 Makefile                        Local validation and smoke commands
 requirements.txt                Python dependencies for scripts
-scripts/validate_profile.py     Profile validator
-scripts/generate_profile.py     Deterministic generator
-scripts/smoke_install.sh        Local install smoke test
+scripts/validate_profile.py              Profile validator
+scripts/generate_profile.py             Deterministic generator
+scripts/smoke_install.sh                Local install smoke test
+scripts/readme_discovery_optimizer.py   README discovery readiness checker
 .github/workflows/              Validation and release guard CI
 skills/                         Bundled profile-specific skills
 templates/                      Params, prompt-engineering, and catalog templates
@@ -381,6 +382,18 @@ Before publishing, make the generated repo easy to find and evaluate:
 - Keep `github-repo-metadata.yaml` current.
 - Add catalog-native snippets from `templates/catalog/` when submitting to profile catalogs or resource lists.
 - Avoid fake affiliations, fake community links, fake support channels, or claims that are not configured.
+
+Check README discovery readiness before publishing:
+
+```bash
+python3 scripts/readme_discovery_optimizer.py .
+```
+
+Apply safe mechanical fixes (topic additions, lineage footer):
+
+```bash
+python3 scripts/readme_discovery_optimizer.py . --fix
+```
 
 Preview metadata changes:
 

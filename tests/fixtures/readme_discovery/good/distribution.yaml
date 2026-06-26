@@ -1,0 +1,6 @@
+name: security-reviewer
+version: 0.1.0
+description: "Systematic security code review agent for vulnerability detection."
+author: "Example Author"
+license: MIT
+hermes_requires: ">=0.12.0"
