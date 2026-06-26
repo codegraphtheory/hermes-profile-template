@@ -2,6 +2,10 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.6
+
+- Added 19-test suite for profile_scorecard.py covering pass, warning, and failure paths across four fixture classes; added hard-failure exit codes and --json/--markdown shorthand flags.
+
 ## 0.6.5
 
 - Integrated community contributor toolkit: release readiness, scorecard, discovery, wizard, demo, catalog, examples, and reusable validation action.
