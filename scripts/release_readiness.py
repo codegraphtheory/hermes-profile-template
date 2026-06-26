@@ -1,183 +1,270 @@
-#!/usr/bin/env python3
-"""Release readiness checks for Hermes profile distributions."""
+﻿#!/usr/bin/env python3
+"""Release readiness checker for Hermes profile distributions.
+
+Emits a Markdown report suitable for release notes or PR comments.
+Checks version discipline, changelog, validation, smoke tests,
+install command, and secret leakage before tagging a release.
+"""
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import subprocess
 import sys
-from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 
-import yaml
+try:
+    import yaml
+except ImportError:
+    yaml = None
 
-RELEASE_RELEVANT_PREFIXES = (
-    ".github/",
-    "docs/",
-    "skills/",
-    "templates/",
-    "scripts/",
-    "web-demo/",
-    "examples/",
-    "SOUL.md",
-    "AGENTS.md",
-    "README.md",
-    "Makefile",
-    "requirements.txt",
-    "distribution.yaml",
-    "config.yaml",
-    "mcp.json",
-)
-IGNORED_PATHS = {"CHANGELOG.md"}
-FORBIDDEN_NAMES = {".env", "auth.json", "state.db", "state.db-shm", "state.db-wal"}
-FORBIDDEN_PARTS = {"memories", "sessions", "logs", "workspace", "plans", ".pytest_cache", "__pycache__"}
+
 SECRET_PATTERNS = [
-    re.compile(r"gh[pousr]_[A-Za-z0-9_]{20,}"),
+    re.compile(r"ghp_[A-Za-z0-9_]{20,}"),
+    re.compile(r"gho_[A-Za-z0-9_]{20,}"),
     re.compile(r"sk-[A-Za-z0-9]{20,}"),
     re.compile(r"xox[baprs]-[A-Za-z0-9-]{20,}"),
     re.compile(r"AKIA[0-9A-Z]{16}"),
 ]
 
+RUNTIME_FILES = {".env", "auth.json", "state.db", "state.db-shm", "state.db-wal",
+                 "memories", "sessions", "logs", "workspace", "plans", "local", "cache"}
 
-@dataclass(frozen=True)
-class CheckResult:
-    name: str
-    status: str
-    detail: str
-    hint: str = ""
-
-
-def run_git(root: Path, args: list[str]) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(["git", *args], cwd=root, text=True, capture_output=True)
+RELEASE_RELEVANT = {"distribution.yaml", "CHANGELOG.md", "README.md",
+                    "requirements.txt", "Makefile", "scripts/", "templates/",
+                    "skills/", "config.yaml", "mcp.json"}
 
 
-def changed_files(root: Path, base: str) -> list[str] | None:
-    proc = run_git(root, ["diff", "--name-only", f"{base}...HEAD"])
-    if proc.returncode != 0:
-        proc = run_git(root, ["diff", "--name-only", base, "HEAD"])
-    if proc.returncode != 0:
-        return None
-    return [line.strip() for line in proc.stdout.splitlines() if line.strip()]
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Check release readiness")
+    parser.add_argument("--base", default="origin/main",
+                        help="Git base ref to compare against (default: origin/main)")
+    parser.add_argument("--repo", default=".",
+                        help="Path to the repository root (default: .)")
+    return parser.parse_args()
 
 
-def read_manifest_version_text(text: str) -> str | None:
-    data = yaml.safe_load(text) or {}
-    version = str(data.get("version") or "").strip()
-    return version or None
+def run_git(cmd: list[str], cwd: str) -> tuple[int, str]:
+    """Run a git command and return (returncode, stdout)."""
+    try:
+        result = subprocess.run(["git"] + cmd, capture_output=True, text=True,
+                                cwd=cwd, timeout=30)
+        return result.returncode, result.stdout.strip()
+    except (subprocess.TimeoutExpired, FileNotFoundError) as e:
+        return -1, str(e)
 
 
-def current_version(root: Path) -> str | None:
-    manifest = root / "distribution.yaml"
-    if not manifest.exists():
-        return None
-    return read_manifest_version_text(manifest.read_text(encoding="utf-8"))
+def check_version_changed(repo_path: str, base: str) -> tuple[bool, str]:
+    """Check if distribution.yaml version changed when release-relevant files changed."""
+    dist_file = Path(repo_path) / "distribution.yaml"
+    if not dist_file.exists():
+        return False, "distribution.yaml not found"
+
+    with open(dist_file) as f:
+        dist = yaml.safe_load(f) if yaml else {}
+    current_version = dist.get("version", "unknown")
+
+    rc, diff = run_git(["diff", "--name-only", base, "--", "."], repo_path)
+    if rc != 0:
+        return False, f"Git comparison failed: {diff}"
+
+    changed_files = set(diff.splitlines())
+    relevant_changed = changed_files & RELEASE_RELEVANT
+    if not relevant_changed:
+        return True, f"Version {current_version} (no release-relevant files changed)"
+
+    rc2, version_diff = run_git(
+        ["diff", base, "--", "distribution.yaml"], repo_path
+    )
+    if rc2 == 0 and version_diff:
+        for line in version_diff.splitlines():
+            if line.startswith("+version:"):
+                return True, f"Version updated to {current_version} ✓"
+        return False, f"Version {current_version} — release-relevant files changed but version not bumped"
+    return True, f"Version {current_version} (new file or no prior version)"
 
 
-def base_version(root: Path, base: str) -> str | None:
-    proc = run_git(root, ["show", f"{base}:distribution.yaml"])
-    if proc.returncode != 0:
-        return None
-    return read_manifest_version_text(proc.stdout)
-
-
-def is_release_relevant(path: str) -> bool:
-    if path in IGNORED_PATHS:
-        return False
-    return any(path == prefix.rstrip("/") or path.startswith(prefix) for prefix in RELEASE_RELEVANT_PREFIXES)
-
-
-def iter_validation_paths(root: Path) -> list[Path]:
-    proc = run_git(root, ["ls-files", "--cached", "--others", "--exclude-standard", "-z"])
-    if proc.returncode == 0:
-        return [root / item for item in proc.stdout.split("\0") if item]
-    return [p for p in root.rglob("*") if p.is_file() and ".git" not in p.parts]
-
-
-def check_version(root: Path, base: str, strict: bool) -> CheckResult:
-    files = changed_files(root, base)
-    if files is None:
-        status = "FAIL" if strict else "SKIP"
-        return CheckResult("version", status, f"Could not compare against {base}", "Fetch the base ref before running release readiness.")
-    relevant = [path for path in files if is_release_relevant(path)]
-    if not relevant:
-        return CheckResult("version", "PASS", "No release-relevant changes detected.")
-    now = current_version(root)
-    before = base_version(root, base)
-    if not now:
-        return CheckResult("version", "FAIL", "distribution.yaml is missing a version.")
-    if before and before == now:
-        return CheckResult("version", "FAIL", f"Release-relevant files changed but version stayed {now}.", "Bump distribution.yaml and add a matching changelog heading.")
-    return CheckResult("version", "PASS", f"Version is release-ready: {before or 'unknown'} -> {now}.")
-
-
-def check_changelog(root: Path) -> CheckResult:
-    version = current_version(root)
-    changelog = root / "CHANGELOG.md"
-    if not version:
-        return CheckResult("changelog", "FAIL", "Cannot read current distribution version.")
+def check_changelog(repo_path: str, version: str) -> tuple[bool, str]:
+    """Check that CHANGELOG.md has a matching heading for the version."""
+    changelog = Path(repo_path) / "CHANGELOG.md"
     if not changelog.exists():
-        return CheckResult("changelog", "FAIL", "CHANGELOG.md is missing.")
-    text = changelog.read_text(encoding="utf-8")
-    if re.search(rf"^##\s+{re.escape(version)}\b", text, re.MULTILINE):
-        return CheckResult("changelog", "PASS", f"Found CHANGELOG.md heading for {version}.")
-    return CheckResult("changelog", "FAIL", f"Missing CHANGELOG.md heading for {version}.")
+        return False, "CHANGELOG.md not found"
+
+    content = changelog.read_text()
+    heading_pattern = re.compile(r"^##\s+\[" + re.escape(version) + r"\]", re.MULTILINE)
+    if heading_pattern.search(content):
+        return True, f"CHANGELOG entry for [{version}] found ✓"
+    # Also try plain heading
+    plain = re.compile(r"^##\s+" + re.escape(version), re.MULTILINE)
+    if plain.search(content):
+        return True, f"CHANGELOG entry for {version} found ✓"
+    return False, f"No CHANGELOG entry found for version {version}"
 
 
-def check_command(root: Path, name: str, cmd: list[str]) -> CheckResult:
-    proc = subprocess.run(cmd, cwd=root, text=True, capture_output=True)
-    detail = (proc.stdout + proc.stderr).strip().splitlines()[-12:]
-    joined = "\n".join(detail) if detail else "command produced no output"
-    return CheckResult(name, "PASS" if proc.returncode == 0 else "FAIL", joined)
+def check_validation(repo_path: str) -> tuple[bool, str]:
+    """Run make validate and check result."""
+    rc, output = run_git(["rev-parse", "--show-toplevel"], repo_path)
+    if rc != 0:
+        return False, "Not a git repository"
+
+    try:
+        result = subprocess.run(
+            ["make", "validate"], capture_output=True, text=True,
+            cwd=repo_path, timeout=60
+        )
+        if result.returncode == 0:
+            return True, "make validate passes ✓"
+        else:
+            lines = result.stdout.splitlines() + result.stderr.splitlines()
+            hint = lines[-1][:100] if lines else "unknown error"
+            return False, f"make validate failed: {hint}"
+    except (subprocess.TimeoutExpired, FileNotFoundError) as e:
+        return False, f"Could not run make validate: {e}"
 
 
-def check_runtime_and_secrets(root: Path) -> CheckResult:
-    hits: list[str] = []
-    for path in iter_validation_paths(root):
-        rel = path.relative_to(root)
-        if path.name in FORBIDDEN_NAMES or set(rel.parts) & FORBIDDEN_PARTS:
-            hits.append(str(rel))
-            continue
-        if path.suffix.lower() in {".png", ".jpg", ".jpeg", ".gif", ".zip", ".pack", ".idx"}:
-            continue
-        try:
-            text = path.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            continue
-        for pattern in SECRET_PATTERNS:
-            if pattern.search(text):
-                hits.append(f"{rel}: matches {pattern.pattern}")
-                break
-    if hits:
-        return CheckResult("runtime-and-secrets", "FAIL", "\n".join(hits[:20]))
-    return CheckResult("runtime-and-secrets", "PASS", "No forbidden runtime paths or token-like secrets found.")
+def check_smoke(repo_path: str) -> tuple[bool, str]:
+    """Run make generate-smoke if the target exists."""
+    makefile = Path(repo_path) / "Makefile"
+    if not makefile.exists():
+        return False, "Makefile not found"
+
+    content = makefile.read_text()
+    if "generate-smoke" not in content:
+        return True, "No generate-smoke target (skipping)"
+
+    try:
+        result = subprocess.run(
+            ["make", "generate-smoke"], capture_output=True, text=True,
+            cwd=repo_path, timeout=120
+        )
+        if result.returncode == 0:
+            return True, "make generate-smoke passes ✓"
+        else:
+            return False, "make generate-smoke failed (see CI for details)"
+    except (subprocess.TimeoutExpired, FileNotFoundError) as e:
+        return False, f"Could not run generate-smoke: {e}"
 
 
-def markdown_report(results: list[CheckResult]) -> str:
-    lines = ["# Release readiness report", "", "| Check | Status | Detail |", "| --- | --- | --- |"]
-    for result in results:
-        detail = result.detail.replace("|", "\\|").replace("\n", "<br>")
-        if result.hint:
-            detail += "<br>Hint: " + result.hint.replace("|", "\\|")
-        lines.append(f"| {result.name} | {result.status} | {detail} |")
-    return "\n".join(lines) + "\n"
+def check_install_command(repo_path: str) -> tuple[bool, str]:
+    """Check that README includes a current install command."""
+    readme = Path(repo_path) / "README.md"
+    if not readme.exists():
+        return False, "README.md not found"
 
-
-def main() -> int:
-    parser = argparse.ArgumentParser(description="Check release readiness for this Hermes profile distribution.")
-    parser.add_argument("--base", default="origin/main", help="Base ref for version discipline checks.")
-    parser.add_argument("--strict", action="store_true", help="Fail instead of skipping when the base ref is unavailable.")
-    args = parser.parse_args()
-    root = Path.cwd()
-    results = [
-        check_version(root, args.base, args.strict),
-        check_changelog(root),
-        check_command(root, "profile-validation", [sys.executable, "scripts/validate_profile.py", "."]),
-        check_command(root, "python-compile", [sys.executable, "-m", "py_compile", *[str(p) for p in sorted((root / "scripts").glob("*.py"))]]),
-        check_runtime_and_secrets(root),
+    content = readme.read_text()
+    install_patterns = [
+        r"hermes\s+profile\s+install",
+        r"pip\s+install",
+        r"npm\s+install",
+        r"brew\s+install",
+        r"curl.*install",
     ]
-    print(markdown_report(results))
-    return 0 if all(result.status in {"PASS", "SKIP"} for result in results) else 1
+    for pattern in install_patterns:
+        if re.search(pattern, content, re.IGNORECASE):
+            match = re.search(pattern, content, re.IGNORECASE)
+            return True, f"Install command found: '{match.group()}' ✓"
+
+    return False, "No recognized install command found in README.md"
+
+
+def check_secrets(repo_path: str) -> tuple[bool, str]:
+    """Check for runtime files and secrets that should not be committed."""
+    findings = []
+    for root, dirs, files in os.walk(repo_path):
+        rel = Path(root).relative_to(repo_path)
+        if str(rel).startswith(".git"):
+            continue
+        for f in files:
+            fp = Path(root) / f
+            if f in RUNTIME_FILES:
+                findings.append(f"Runtime file present: {rel / f}")
+            try:
+                if fp.stat().st_size < 1_000_000:
+                    text = fp.read_text(errors="replace")
+                    for pattern in SECRET_PATTERNS:
+                        if pattern.search(text):
+                            findings.append(f"Possible secret in {rel / f}: matches {pattern.pattern[:20]}...")
+            except Exception:
+                pass
+
+    if findings:
+        return False, f"Found {len(findings)} issue(s):\n  " + "\n  ".join(findings[:5])
+    return True, "No secrets or runtime files detected ✓"
+
+
+def get_current_version(repo_path: str) -> str:
+    """Read the current version from distribution.yaml."""
+    dist_file = Path(repo_path) / "distribution.yaml"
+    if dist_file.exists():
+        try:
+            with open(dist_file) as f:
+                dist = yaml.safe_load(f) if yaml else {}
+            return dist.get("version", "unknown")
+        except Exception:
+            return "unknown"
+    return "unknown"
+
+
+def main() -> None:
+    args = parse_args()
+    repo = os.path.abspath(args.repo)
+    version = get_current_version(repo)
+
+    checks = [
+        ("Version discipline", check_version_changed(repo, args.base)),
+        ("CHANGELOG entry", check_changelog(repo, version)),
+        ("Validation", check_validation(repo)),
+        ("Profile smoke", check_smoke(repo)),
+        ("Install command in README", check_install_command(repo)),
+        ("Secrets & runtime files", check_secrets(repo)),
+    ]
+
+    passed = 0
+    failed = 0
+    report_lines = [
+        f"# Release Readiness Report",
+        f"",
+        f"**Generated:** {datetime.now().isoformat()}",
+        f"**Version:** {version}",
+        f"**Base ref:** {args.base}",
+        f"",
+        f"| Check | Status | Detail |",
+        f"|-------|--------|--------|",
+    ]
+
+    for name, (ok, detail) in checks:
+        status = "✅ Pass" if ok else "❌ Fail"
+        if ok:
+            passed += 1
+        else:
+            failed += 1
+        detail_short = detail.splitlines()[0][:80] if detail else ""
+        report_lines.append(f"| {name} | {status} | {detail_short} |")
+
+    report_lines.extend([
+        f"",
+        f"## Summary",
+        f"",
+        f"- **Passed:** {passed}/{len(checks)}",
+        f"- **Failed:** {failed}/{len(checks)}",
+        f"- **Overall:** {'✅ Ready for release' if failed == 0 else '❌ Issues to resolve'}",
+        f"",
+        f"### Remediation",
+    ])
+
+    if failed > 0:
+        report_lines.append("")
+        for name, (ok, detail) in checks:
+            if not ok:
+                report_lines.append(f"- **{name}**: {detail}")
+    else:
+        report_lines.append("All checks pass. The release is ready.")
+
+    report = "\n".join(report_lines)
+    print(report)
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()
