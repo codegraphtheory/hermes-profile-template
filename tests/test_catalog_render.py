@@ -42,7 +42,7 @@ class CatalogRenderTests(unittest.TestCase):
         self.assertIn("source_url:", actual)
 
     def test_all_formats_render(self):
-        for fmt in ("markdown", "yaml", "readme-line", "pr-body"):
+        for fmt in ("markdown", "yaml", "pr-body", "all"):
             output = self.run_renderer(fmt)
             self.assertTrue(output.strip(), f"empty output for format={fmt}")
 
