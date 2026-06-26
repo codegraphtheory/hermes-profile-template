@@ -21,7 +21,7 @@ Manual version for narration:
 ```bash
 tmpdir="$(mktemp -d)"
 export HERMES_HOME="$tmpdir/hermes-home"
-hermes profile install . --name profile-architect-demo --alias --yes
+hermes profile install . --name profile-architect-demo --alias --yes --force
 profile-architect-demo chat
 ```
 

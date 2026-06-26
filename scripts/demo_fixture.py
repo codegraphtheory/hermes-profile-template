@@ -20,8 +20,25 @@ class DemoResult:
     note: str
 
 
+def redact_command(args: list[str]) -> str:
+    temp_root = tempfile.gettempdir()
+    redacted = [
+        "$TMPDIR" if str(arg).startswith(temp_root) else str(arg)
+        for arg in args
+    ]
+    return " ".join(redacted)
+
+
+def assert_no_runtime_state(root: Path) -> None:
+    forbidden = {".env", "auth.json", "state.db", "sessions", "memories", "logs"}
+    hits = [path for path in root.rglob("*") if path.name in forbidden]
+    if hits:
+        names = ", ".join(str(path.relative_to(root)) for path in hits)
+        raise RuntimeError(f"Generated profile includes runtime state: {names}")
+
+
 def run(args: list[str], *, cwd: Path, env: dict[str, str] | None = None) -> None:
-    print("$ " + " ".join(str(arg) for arg in args))
+    print("$ " + redact_command(args))
     subprocess.run(args, cwd=cwd, env=env, check=True)
 
 
@@ -39,6 +56,7 @@ def generate_profile_demo(root: Path, workspace: Path) -> DemoResult:
         cwd=root,
     )
     run([sys.executable, str(output / "scripts" / "validate_profile.py"), str(output)], cwd=root)
+    assert_no_runtime_state(output)
     return DemoResult(
         "generate-and-validate",
         "passed",
@@ -60,9 +78,13 @@ def install_architect_demo(root: Path, workspace: Path, *, require_hermes: bool)
         )
     hermes_home = workspace / "hermes-home"
     hermes_home.mkdir(parents=True, exist_ok=True)
-    env = {**os.environ, "HERMES_HOME": str(hermes_home)}
+    env = {
+        **os.environ,
+        "HERMES_HOME": str(hermes_home),
+        "HERMES_NO_UPDATE_CHECK": "1",
+    }
     run(
-        [hermes, "profile", "install", ".", "--name", "profile-architect-demo", "--alias", "--yes"],
+        [hermes, "profile", "install", ".", "--name", "profile-architect-demo", "--yes", "--force"],
         cwd=root,
         env=env,
     )
