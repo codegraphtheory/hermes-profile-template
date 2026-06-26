@@ -1,0 +1,13 @@
+## release-manager
+
+Reviews release readiness and changelog discipline for Hermes profile repositories.
+
+- Install: `hermes profile install https://github.com/acme/release-manager --alias`
+- Source: https://github.com/acme/release-manager
+- Version: `0.1.0`
+- License: `MIT`
+- Topics: `hermes-agent`, `release-management`, `profile-distribution`
+- Source template: [codegraphtheory/hermes-profile-template](https://github.com/codegraphtheory/hermes-profile-template)
+- Safety: Does not include runtime state, secrets, memories, sessions, or private user data. Validate before publishing with `make validate`.
+
+Before submitting this entry, adapt it to the target catalog's contribution rules and remove placeholders that do not apply.

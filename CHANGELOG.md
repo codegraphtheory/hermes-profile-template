@@ -2,6 +2,12 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.7.0
+
+- Added a secret-safe demo kit under `docs/demos/` with fixture, cleanup, and smoke scripts for recording demos without leaking secrets.
+- Added reusable GitHub Action assets for profile distribution validation and a copyable generated-profile workflow template.
+- Added catalog submission generators for Markdown, YAML, resource-line, and PR-body outputs with tests and documentation.
+
 ## 0.6.3
 
 - Added real Hermes LLM calls to the local web demo pipeline: one call expands the sentence into a mature profile prompt, another reviews generated profile quality.
@@ -70,3 +76,4 @@ All notable changes to this Hermes profile distribution are documented here.
 ## 0.1.0
 
 - Initial Hermes profile template with deterministic generation, validation, bundled profile-craft skill, catalog snippets, and installable distribution metadata.
+

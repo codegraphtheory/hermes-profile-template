@@ -1,0 +1,22 @@
+## Catalog submission
+
+This PR proposes adding `release-manager`, a Hermes Agent profile distribution.
+
+## User value
+
+Reviews release readiness and changelog discipline for Hermes profile repositories.
+
+## Install
+
+```bash
+hermes profile install https://github.com/acme/release-manager --alias
+```
+
+## Safety and maintenance notes
+
+- Source: https://github.com/acme/release-manager
+- Version: 0.1.0
+- License: MIT
+- Safety: Does not include runtime state, secrets, memories, sessions, or private user data. Validate before publishing with `make validate`.
+- I checked this target catalog's contribution rules before submitting.
+- This entry does not claim unofficial affiliations, audits, support channels, or production guarantees.

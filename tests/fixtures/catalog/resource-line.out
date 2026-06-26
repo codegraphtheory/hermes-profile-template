@@ -1,0 +1,1 @@
+- [release-manager](https://github.com/acme/release-manager) — Reviews release readiness and changelog discipline for Hermes profile repositories. Install: `hermes profile install https://github.com/acme/release-manager --alias`

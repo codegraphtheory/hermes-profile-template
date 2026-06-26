@@ -326,6 +326,7 @@ Before publishing, make the generated repo easy to find and evaluate:
 - Use GitHub topics such as `hermes-agent`, `ai-agents`, `agent-profile`, `profile-distribution`, and domain-specific topics.
 - Keep `github-repo-metadata.yaml` current.
 - Add catalog-native snippets from `templates/catalog/` when submitting to profile catalogs or resource lists.
+- Generate catalog submission copy with `python3 scripts/render_catalog_entry.py . --format all --source-url <repo-url>`.
 - Avoid fake affiliations, fake community links, fake support channels, or claims that are not configured.
 
 Preview metadata changes:
@@ -356,6 +357,27 @@ Most generated profile repos should customize:
 - `templates/catalog/`: snippets for external catalogs and resource lists.
 
 Never commit `.env`, API keys, OAuth tokens, credentials, memories, sessions, logs, runtime databases, or private user data.
+
+## Reusable validation action
+
+This repository ships a composite GitHub Action for generated profile repos:
+
+```yaml
+- uses: ./.github/actions/validate-profile
+```
+
+Copy [`templates/github-actions/validate-profile.yml`](templates/github-actions/validate-profile.yml) into generated profile repositories when you want the same validation contract in CI. See [`docs/github-actions-validation.md`](docs/github-actions-validation.md).
+
+## Record a safe demo
+
+Use the demo kit when recording scaffold, validate, smoke, or interactive profile-builder demos:
+
+```bash
+scripts/demo_fixture.sh
+scripts/demo_smoke.sh
+```
+
+See [`docs/demos/`](docs/demos/) for copy-pasteable commands, narration scripts, cleanup, and a redaction checklist.
 
 ## Release discipline
 

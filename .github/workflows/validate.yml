@@ -13,11 +13,11 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
-      - name: Install validation dependencies
-        run: python -m pip install -r requirements.txt
-      - name: Compile scripts
-        run: make compile
-      - name: Validate repository profile distribution
-        run: make validate
+      - name: Validate with reusable profile action
+        uses: ./.github/actions/validate-profile
+        with:
+          install-smoke: "false"
+      - name: Smoke-test secret-safe demo kit
+        run: make demo-smoke
       - name: Smoke-test install path
         run: make smoke

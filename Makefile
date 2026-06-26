@@ -1,4 +1,4 @@
-.PHONY: deps validate compile generate-smoke sentence-smoke smoke web-demo release-check clean
+.PHONY: deps validate compile generate-smoke sentence-smoke demo-smoke action-smoke smoke web-demo release-check clean
 
 PYTHON ?= python3
 BASE ?= origin/main
@@ -25,6 +25,14 @@ sentence-smoke:
 
 web-demo:
 	$(PYTHON) web-demo/server.py
+
+demo-smoke:
+	scripts/demo_smoke.sh
+
+action-smoke:
+	test -f .github/actions/validate-profile/action.yml
+	test -f templates/github-actions/validate-profile.yml
+	test -f docs/github-actions-validation.md
 
 smoke:
 	scripts/smoke_install.sh

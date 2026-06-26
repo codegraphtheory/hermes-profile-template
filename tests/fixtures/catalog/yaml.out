@@ -1,0 +1,22 @@
+name: release-manager
+description: Reviews release readiness and changelog discipline for Hermes profile
+  repositories.
+source_url: https://github.com/acme/release-manager
+install: hermes profile install https://github.com/acme/release-manager --alias
+version: 0.1.0
+license: MIT
+topics:
+- hermes-agent
+- release-management
+- profile-distribution
+env_requires:
+- name: GITHUB_TOKEN
+  required: false
+  description: Optional GitHub token for issue and PR lookup.
+safety: Does not include runtime state, secrets, memories, sessions, or private user
+  data. Validate before publishing with `make validate`.
+catalog_submission_note: Follow the target catalog's contribution rules; do not invent
+  affiliations, support channels, or production claims.
+template_source:
+  name: codegraphtheory/hermes-profile-template
+  url: https://github.com/codegraphtheory/hermes-profile-template
