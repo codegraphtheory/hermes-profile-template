@@ -152,6 +152,17 @@ def check_runtime_and_secrets(root: Path) -> CheckResult:
     return CheckResult("runtime-and-secrets", "PASS", "No forbidden runtime paths or token-like secrets found.")
 
 
+def check_docs_install_command(root: Path) -> CheckResult:
+    readme = root / "README.md"
+    if not readme.exists():
+        return CheckResult("docs-install-command", "FAIL", "README.md is missing.")
+    text = readme.read_text(encoding="utf-8")
+    required = "hermes profile install github.com/codegraphtheory/hermes-profile-template"
+    if required not in text:
+        return CheckResult("docs-install-command", "FAIL", "README.md does not show the canonical install command.", required)
+    return CheckResult("docs-install-command", "PASS", "README includes the canonical install command.")
+
+
 def markdown_report(results: list[CheckResult]) -> str:
     lines = ["# Release readiness report", "", "| Check | Status | Detail |", "| --- | --- | --- |"]
     for result in results:
@@ -174,6 +185,7 @@ def main() -> int:
         check_command(root, "profile-validation", [sys.executable, "scripts/validate_profile.py", "."]),
         check_command(root, "python-compile", [sys.executable, "-m", "py_compile", *[str(p) for p in sorted((root / "scripts").glob("*.py"))]]),
         check_runtime_and_secrets(root),
+        check_docs_install_command(root),
     ]
     print(markdown_report(results))
     return 0 if all(result.status in {"PASS", "SKIP"} for result in results) else 1

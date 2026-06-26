@@ -33,11 +33,21 @@ CLASSES = {
         "principles": ["Never ship without a rollback path.", "Automate checks before relying on memory."],
         "github_topics": ["hermes-agent", "release-management", "devops"],
     },
+    "general": {
+        "name": "custom-profile",
+        "display_name": "Custom Profile",
+        "description": "General-purpose Hermes profile scaffold for a focused specialist agent.",
+        "toolsets": ["terminal", "file"],
+        "principles": ["State assumptions clearly.", "Verify generated artifacts before handoff."],
+        "github_topics": ["hermes-agent", "agent-profile"],
+    },
 }
 BUNDLES = {
     "open-source": {"toolsets": ["github"], "scope": ["Review contribution workflow and public docs."], "topics": ["open-source"]},
     "safe-demo": {"toolsets": ["terminal"], "scope": ["Record demos only in temporary workspaces."], "topics": ["demo"]},
     "security": {"toolsets": ["terminal", "file"], "scope": ["Scan for secrets and runtime state."], "topics": ["security"]},
+    "database": {"toolsets": ["terminal", "file"], "scope": ["Review migrations, schemas, and rollback plans."], "topics": ["database", "migrations"]},
+    "api-integration": {"toolsets": ["web", "terminal", "file"], "scope": ["Validate API contracts, retries, and rate-limit behavior."], "topics": ["api", "integration"]},
 }
 
 

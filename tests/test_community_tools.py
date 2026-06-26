@@ -48,6 +48,31 @@ class CommunityToolsTest(unittest.TestCase):
         self.assertEqual(data["name"], "hermes-profile-template")
         self.assertIn("hermes profile install", data["install"])
 
+    def test_profile_wizard_general_database_bundle(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            params = Path(tmp) / "profile.params.yaml"
+            proc = subprocess.run(
+                [sys.executable, "scripts/profile_wizard.py", "--class", "general", "--bundle", "database", "--output", str(params)],
+                cwd=ROOT,
+                text=True,
+                capture_output=True,
+            )
+            self.assertEqual(proc.returncode, 0, proc.stderr + proc.stdout)
+            data = yaml.safe_load(params.read_text())
+            self.assertEqual(data["name"], "custom-profile")
+            self.assertIn("database", data["github_topics"])
+
+    def test_demo_cleanup_refuses_unmarked_workspace(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            proc = subprocess.run(
+                [sys.executable, "scripts/demo_cleanup.py", tmp],
+                cwd=ROOT,
+                text=True,
+                capture_output=True,
+            )
+            self.assertNotEqual(proc.returncode, 0)
+            self.assertIn("missing .hermes-demo-fixture marker", proc.stderr + proc.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()
