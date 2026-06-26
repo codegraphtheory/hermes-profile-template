@@ -2,6 +2,10 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.6
+
+- Upgraded profile_wizard.py with full interactive mode, 5 profile classes (engineer, researcher, operator, security, data), 5 bundles, per-field overrides (--name, --display-name, --description, --author, --env-requires, --topic), --generate flag to run generator in one command, and 33-test suite covering all classes, bundles, CLI flags, and file-write edge cases.
+
 ## 0.6.5
 
 - Integrated community contributor toolkit: release readiness, scorecard, discovery, wizard, demo, catalog, examples, and reusable validation action.
