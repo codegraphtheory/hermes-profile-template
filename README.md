@@ -1,5 +1,9 @@
 # Hermes Profile Template
 
+[![Validate](https://github.com/codegraphtheory/hermes-profile-template/actions/workflows/validate.yml/badge.svg)](https://github.com/codegraphtheory/hermes-profile-template/actions/workflows/validate.yml)
+[![Release Guard](https://github.com/codegraphtheory/hermes-profile-template/actions/workflows/release-guard.yml/badge.svg)](https://github.com/codegraphtheory/hermes-profile-template/actions/workflows/release-guard.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Turn a prompt into an installable Hermes profile repo.
 
 `hermes-profile-template` is a developer authoring system for Hermes Agent profile distributions. Install this repo as a Hermes profile, describe the profile you want, and have Hermes produce a GitHub-ready repository with `SOUL.md`, `distribution.yaml`, safe config, docs, validation scripts, CI, release checks, and install instructions.
@@ -438,3 +442,7 @@ Turn a prompt into an installable Hermes profile repo
 ## License
 
 MIT. See [`LICENSE`](LICENSE).
+
+## Share
+
+Copy-paste snippets for sharing this template are in [`docs/share.md`](docs/share.md).

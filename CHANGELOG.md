@@ -2,6 +2,12 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.6
+
+- Added CI badge row (validate, release-guard, license) to README header.
+- Added `docs/share.md` with copy-paste snippets: one-sentence description, 280-character post, newsletter blurb, maintainer blurb, and example commands.
+- Linked `docs/share.md` from README License section.
+
 ## 0.6.5
 
 - Integrated community contributor toolkit: release readiness, scorecard, discovery, wizard, demo, catalog, examples, and reusable validation action.
