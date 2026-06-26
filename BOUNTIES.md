@@ -33,3 +33,16 @@ Main commits:
 3. Keep one PR scoped to one issue unless a maintainer asks for consolidation.
 4. After payment, a maintainer should comment with the wallet and Solscan transaction link.
 5. Update this file only after the transaction link is available.
+
+## Contributor kindness checklist
+
+Before claiming or opening a bounty PR, please reduce maintainer load by doing the small checks first:
+
+1. Check the issue thread and open PR list for active work on the same issue.
+2. If another PR already covers the issue, either review/test it or choose a different issue instead of adding a near-duplicate.
+3. Keep claims specific: name the issue, the intended artifact, and your Solana wallet if the issue is bounty-eligible.
+4. Keep implementation PRs narrow enough to review in one pass. Avoid bundling unrelated bounties unless a maintainer asks for consolidation.
+5. Put exact verification commands in the PR body, including failures or intentionally skipped checks.
+6. If your PR is superseded by a maintainer integration, leave it closed unless a maintainer asks for a follow-up. Credit and payout can still be recorded from the original thread.
+
+This is not a gate. It is a courtesy protocol for a crowded bounty board.
