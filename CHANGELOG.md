@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.7
+
+- Link the public GraphTheory developer docs from the profile README.
+
 All notable changes to this Hermes profile distribution are documented here.
 
 ## 0.6.6
