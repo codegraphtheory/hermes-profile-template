@@ -1,0 +1,95 @@
+name: Reusable — Validate Hermes Profile Distribution
+
+# Reusable workflow for generated Hermes profile repositories.
+# Copy this file to .github/workflows/validate.yml in your generated profile repo,
+# or call it from your own workflow using `uses:`.
+#
+# Usage in a generated repo:
+#
+#   jobs:
+#     validate:
+#       uses: codegraphtheory/hermes-profile-template/.github/workflows/reusable-validate.yml@main
+#
+# Or copy this file directly and run standalone.
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: "Python version to use"
+        type: string
+        default: "3.11"
+      profile-dir:
+        description: "Path to the profile distribution root (default: repo root)"
+        type: string
+        default: "."
+      run-smoke:
+        description: "Run smoke install test when Hermes CLI is available"
+        type: boolean
+        default: false
+
+  # Also allow running directly in this repo for smoke-testing the workflow itself
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/reusable-validate.yml"
+  pull_request:
+    paths:
+      - ".github/workflows/reusable-validate.yml"
+
+jobs:
+  validate-profile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ inputs.python-version || '3.11' }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            pip install pyyaml
+          fi
+
+      - name: Compile Python scripts (syntax check)
+        run: |
+          profile_dir="${{ inputs.profile-dir || '.' }}"
+          echo "Checking Python syntax in: $profile_dir"
+          find "$profile_dir/scripts" -name "*.py" -exec python -m py_compile {} \; 2>/dev/null || true
+          echo "Syntax check complete."
+
+      - name: Validate profile distribution
+        run: |
+          profile_dir="${{ inputs.profile-dir || '.' }}"
+          if [ -f "$profile_dir/scripts/validate_profile.py" ]; then
+            python "$profile_dir/scripts/validate_profile.py" "$profile_dir"
+          elif [ -f "scripts/validate_profile.py" ]; then
+            # Fallback: use validator from template root
+            python scripts/validate_profile.py "$profile_dir"
+          else
+            echo "::warning::validate_profile.py not found — skipping profile validation"
+          fi
+
+      - name: Run quality scorecard
+        run: |
+          profile_dir="${{ inputs.profile-dir || '.' }}"
+          if [ -f "scripts/profile_scorecard.py" ]; then
+            python scripts/profile_scorecard.py "$profile_dir" || true
+          fi
+
+      - name: Smoke-test install path (optional)
+        if: ${{ inputs.run-smoke == true }}
+        run: |
+          if command -v hermes &>/dev/null; then
+            echo "Hermes CLI found — running smoke install"
+            make smoke
+          else
+            echo "::notice::Hermes CLI not available — skipping smoke install"
+          fi

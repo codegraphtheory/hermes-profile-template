@@ -1,0 +1,14 @@
+name: Validate Profile Distribution
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    uses: codegraphtheory/hermes-profile-template/.github/workflows/reusable-validate.yml@main
+    with:
+      python-version: "3.11"
+      profile-dir: "."
+      run-smoke: false
