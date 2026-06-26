@@ -1,12 +1,26 @@
-# Hermes profile examples
+﻿# Searchable Examples Gallery
 
-These lightweight examples show publishable profile shapes without including real credentials or runtime state.
+This directory contains generated profile examples for reference.
 
-| Example | Use case | Install command | Keywords |
-| --- | --- | --- | --- |
-| `security-reviewer` | Reviews code and architecture for application security risk. | `hermes profile install github.com/YOUR_ORG/security-reviewer --alias` | security, code review |
-| `database-migration-reviewer` | Reviews SQL migrations for rollout and rollback risk. | `hermes profile install github.com/YOUR_ORG/database-migration-reviewer --alias` | database, migrations, rollback |
-| `release-manager` | Coordinates changelog, smoke validation, and rollout notes. | `hermes profile install github.com/YOUR_ORG/release-manager --alias` | release, CI, smoke testing |
-| `research-assistant` | Builds source-grounded briefs with uncertainty labels. | `hermes profile install github.com/YOUR_ORG/research-assistant --alias` | research, documentation |
+## Available Examples
 
-Machine-readable metadata lives in `gallery.json`. Replace `YOUR_ORG` before publishing any install command.
+| Profile | Type | Description |
+|---------|------|-------------|
+| basic-developer | Developer | Simple developer profile |
+| open-source-maintainer | Maintainer | Open source maintainer showcase |
+| data-scientist | Data | Data science portfolio |
+| devops-engineer | DevOps | DevOps and infrastructure profile |
+| full-stack-creator | Creator | Full-stack development profile |
+
+## CLI Usage
+
+```bash
+# List all examples
+python scripts/list_examples.py
+
+# Show a specific example
+python scripts/list_examples.py --show basic-developer
+
+# Generate from example template
+python scripts/list_examples.py --generate open-source-maintainer --output ./my-profile
+```
