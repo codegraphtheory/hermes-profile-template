@@ -2,17 +2,54 @@
 
 [![Validation](https://img.shields.io/github/actions/workflow/status/codegraphtheory/hermes-profile-template/validate.yml?branch=main&label=validation)](https://github.com/codegraphtheory/hermes-profile-template/actions/workflows/validate.yml) [![Release guard](https://img.shields.io/github/actions/workflow/status/codegraphtheory/hermes-profile-template/release-guard.yml?branch=main&label=release%20guard)](https://github.com/codegraphtheory/hermes-profile-template/actions/workflows/release-guard.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Latest release](https://img.shields.io/github/v/release/codegraphtheory/hermes-profile-template?label=latest%20release)](https://github.com/codegraphtheory/hermes-profile-template/releases)
 
-Turn a prompt into an installable Hermes profile repo.
+One prompt in. A complete installable Hermes Agent profile repo out.
 
 `hermes-profile-template` is a developer authoring system for Hermes Agent profile distributions. Install this repo as a Hermes profile, describe the profile you want, and have Hermes produce a GitHub-ready repository with `SOUL.md`, `distribution.yaml`, safe config, docs, validation scripts, CI, release checks, and install instructions.
+
+<p align="center">
+  <a href="https://x.com/graphtheory/status/2070334487943102926?s=20">
+    <img src="docs/assets/x-demo-card.svg" alt="Watch the GraphTheory demo showing one prompt becoming an installable Hermes Agent profile repo" width="100%">
+  </a>
+</p>
+
+Watch the live demo from GraphTheory: [prompt to profile repo on X](https://x.com/graphtheory/status/2070334487943102926?s=20). GitHub README Markdown does not run X embed scripts or iframes, so this README embeds a linked demo card instead of third-party JavaScript.
 
 Hermes Agent core provides profile isolation and distribution install/update commands such as `hermes profile install` and `hermes profile update`. This repository supplies the author workflow around that runtime: prompt intake, deterministic generation, validation, smoke testing, publication hygiene, and discoverability assets.
 
 For the boundary between Hermes core and this template, see [`docs/profile-distribution-contract.md`](docs/profile-distribution-contract.md).
 
+## Try it
+
+```bash
+hermes profile install github.com/codegraphtheory/hermes-profile-template \
+  --name profile-architect \
+  --alias \
+  --yes
+
+profile-architect chat
+```
+
+Paste this:
+
+```text
+Turn "a Solana token risk reviewer" into a fantastic installable Hermes profile repo under /tmp/solana-token-risk-reviewer. Expand the idea into a mature agent prompt first, preserve it in docs/profile-prompt.md, then generate the repo and run validation. Use no real credentials.
+```
+
+Then verify the generated repo:
+
+```bash
+cd /tmp/solana-token-risk-reviewer
+python3 scripts/validate_profile.py .
+hermes profile install . --name solana-token-risk-reviewer-demo --yes --force
+```
+
+## Why not just write a prompt?
+
+A prompt is not a distributable agent profile. This template adds the missing engineering wrapper: repeatable install, profile manifest, safe config, bundled skills, docs, validation, CI, release checks, contribution hygiene, and publication metadata.
+
 ## Built with this template
 
-These public Hermes profiles have verified `distribution.yaml` template lineage pointing back to this repository.
+These public Hermes profiles have verified `distribution.yaml` template lineage pointing back to this repository. Use them as reference implementations for how a generated profile should package identity, skills, docs, safe config, validation, and install instructions.
 
 | Profile | What it is | Install | Star |
 | --- | --- | --- | --- |
@@ -24,7 +61,29 @@ If you publish a profile built from this template, keep `template_source` in `di
 
 ## Bounties and payout proof
 
-We pay contributors transparently when bounty work is accepted. See [BOUNTIES.md](BOUNTIES.md) for recorded Solana payout proof and contributor PR links.
+We pay contributors transparently when wallet-bearing bounty work is accepted. See [BOUNTIES.md](BOUNTIES.md) for recorded Solana payout proof, PR links, and the current payout-ready queue. Not every contribution is paid, but accepted bounty work should be auditable.
+
+## Copy-paste profile ideas
+
+Use these as starting prompts for `profile-architect chat`:
+
+```text
+Turn "a Solidity audit reviewer" into a fantastic installable Hermes profile repo under /tmp/solidity-audit-reviewer. Expand the idea into a mature agent prompt first, preserve it in docs/profile-prompt.md, then generate the repo and run validation. Use no real credentials.
+
+Turn "a Pinecone RAG evaluation architect" into a fantastic installable Hermes profile repo under /tmp/pinecone-rag-evaluator. Expand the idea into a mature agent prompt first, preserve it in docs/profile-prompt.md, then generate the repo and run validation. Use no real credentials.
+
+Turn "an open-source release manager" into a fantastic installable Hermes profile repo under /tmp/open-source-release-manager. Expand the idea into a mature agent prompt first, preserve it in docs/profile-prompt.md, then generate the repo and run validation. Use no real credentials.
+
+Turn "a source-grounded research assistant" into a fantastic installable Hermes profile repo under /tmp/source-grounded-research-assistant. Expand the idea into a mature agent prompt first, preserve it in docs/profile-prompt.md, then generate the repo and run validation. Use no real credentials.
+
+Turn "a DeFi compliance documentation reviewer" into a fantastic installable Hermes profile repo under /tmp/defi-compliance-doc-reviewer. Expand the idea into a mature agent prompt first, preserve it in docs/profile-prompt.md, then generate the repo and run validation. Use no real credentials.
+```
+
+## Launch and discovery kit
+
+- [Launch and sharing kit](docs/launch-kit.md): copy-paste X posts, GitHub profile pin text, and resource-list submission snippets.
+- [Discovery metadata guide](docs/discovery-metadata.md): recommended descriptions and topics for generated profile repos.
+- [Contributor growth backlog](docs/contributor-growth-backlog.md): reusable good-first issue ideas for maintainers.
 
 ## The literal workflow
 

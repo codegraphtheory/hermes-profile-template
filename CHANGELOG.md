@@ -2,6 +2,12 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.6
+
+- Added a growth-focused README first screen with the X demo link, fast try-it path, and prompt-to-repo positioning.
+- Added launch, discovery metadata, and contributor-growth docs for maintainers sharing profile distributions.
+- Added copy-paste profile prompt examples and the `prompt-to-repo` repository topic.
+
 ## 0.6.5
 
 - Integrated community contributor toolkit: release readiness, scorecard, discovery, wizard, demo, catalog, examples, and reusable validation action.
