@@ -1,0 +1,10 @@
+description: Researches topics using web search and local documents, producing structured
+  summaries with citations.
+homepage: ''
+topics:
+- hermes-agent
+- ai-agents
+- agent-profile
+- research
+- web-search
+- summarization

@@ -1,0 +1,10 @@
+description: Prepares and validates software releases including changelog, version
+  bumps, and smoke tests.
+homepage: ''
+topics:
+- hermes-agent
+- ai-agents
+- agent-profile
+- release-management
+- changelog
+- ci-cd

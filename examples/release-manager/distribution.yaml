@@ -1,0 +1,33 @@
+name: release-manager
+version: 0.1.0
+description: Prepares and validates software releases including changelog, version
+  bumps, and smoke tests.
+hermes_requires: '>=0.12.0'
+author: Hermes profile author
+license: MIT
+template_source:
+  name: codegraphtheory/hermes-profile-template
+  url: https://github.com/codegraphtheory/hermes-profile-template
+  relationship: generated-from-template
+env_requires:
+- name: GITHUB_TOKEN
+  description: Token for creating GitHub releases and tags.
+  required: false
+distribution_owned:
+- SOUL.md
+- config.yaml
+- mcp.json
+- skills/
+- templates/
+- scripts/
+- distribution.yaml
+- README.md
+- AGENTS.md
+- CHANGELOG.md
+- CONTRIBUTING.md
+- SECURITY.md
+- github-repo-metadata.yaml
+- requirements.txt
+- Makefile
+- docs/
+- .env.EXAMPLE

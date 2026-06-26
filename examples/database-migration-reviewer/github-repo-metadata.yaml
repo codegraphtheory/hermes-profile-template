@@ -1,0 +1,10 @@
+description: Reviews database migration scripts for safety, rollback readiness, and
+  production risk.
+homepage: ''
+topics:
+- hermes-agent
+- ai-agents
+- agent-profile
+- database
+- migrations
+- sql

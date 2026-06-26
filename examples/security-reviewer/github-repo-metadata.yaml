@@ -1,0 +1,10 @@
+description: Reviews code changes for security vulnerabilities, dependency risks,
+  and secret exposure.
+homepage: ''
+topics:
+- hermes-agent
+- ai-agents
+- agent-profile
+- security
+- code-review
+- vulnerability-detection
