@@ -2,6 +2,11 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.6
+
+- Added `scripts/readme_discovery_optimizer.py`: checks generated profile repos across 10 discovery dimensions (description, install command, GitHub topics, domain keywords, template lineage, validation/smoke commands, license, security docs, social preview) and reports actionable fix hints. Supports `--fix` for safe mechanical patches and `--json`/`--markdown` output.
+- Added two test fixtures (`tests/fixtures/readme_discovery/`) and 17 tests covering good and minimal repo shapes.
+
 ## 0.6.5
 
 - Integrated community contributor toolkit: release readiness, scorecard, discovery, wizard, demo, catalog, examples, and reusable validation action.
