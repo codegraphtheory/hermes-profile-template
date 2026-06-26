@@ -6,6 +6,7 @@ import argparse
 import re
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -489,7 +490,7 @@ def generate(params: dict[str, Any], output: Path, force: bool, template_root: P
         write(output / ".github" / "template-source.yml", template_source_file)
 
     result = subprocess.run(
-        ["python3", str(output / "scripts" / "validate_profile.py"), str(output)],
+        [sys.executable, str(output / "scripts" / "validate_profile.py"), str(output)],
         text=True,
         capture_output=True,
     )

@@ -48,6 +48,29 @@ class CommunityToolsTest(unittest.TestCase):
         self.assertEqual(data["name"], "hermes-profile-template")
         self.assertIn("hermes profile install", data["install"])
 
+    def test_demo_docs_cover_recording_paths(self):
+        demo_readme = (ROOT / "docs" / "demos" / "README.md").read_text()
+        generate_demo = (ROOT / "docs" / "demos" / "generate-and-validate.md").read_text()
+        install_demo = (ROOT / "docs" / "demos" / "install-profile-builder.md").read_text()
+
+        self.assertIn("generate-and-validate.md", demo_readme)
+        self.assertIn("install-profile-builder.md", demo_readme)
+        self.assertIn("Redaction", generate_demo)
+        self.assertIn("Redaction", install_demo)
+        self.assertIn("scripts/demo_cleanup.py", generate_demo)
+        self.assertIn("HERMES_HOME", install_demo)
+
+    def test_demo_cleanup_refuses_unmarked_directory(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            proc = subprocess.run(
+                [sys.executable, "scripts/demo_cleanup.py", tmp],
+                cwd=ROOT,
+                text=True,
+                capture_output=True,
+            )
+            self.assertNotEqual(proc.returncode, 0)
+            self.assertIn("missing .hermes-demo-fixture marker", proc.stderr + proc.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

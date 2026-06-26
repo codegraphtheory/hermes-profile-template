@@ -154,9 +154,21 @@ Included tools:
 - `scripts/discovery_optimizer.py`: GitHub metadata and README discovery checks.
 - `scripts/render_catalog_entry.py`: catalog-ready Markdown, YAML, and PR-body snippets.
 - `scripts/demo_fixture.py`: safe temporary demo workspaces with runtime-state checks.
+- `scripts/demo_cleanup.py`: removes only demo workspaces that contain the expected safety marker.
 - `scripts/release_readiness.py`: changelog, version, validation, compile, and secret hygiene release report.
 - `.github/actions/validate-profile/action.yml`: reusable validation action for generated profile repos.
 - `examples/gallery.json`: lightweight generated-profile gallery metadata.
+
+### Safe demo kit
+
+Use [`docs/demos/`](docs/demos/README.md) to record repeatable demos without showing secrets, local paths, Hermes runtime state, or private profile data.
+
+```bash
+python3 scripts/demo_fixture.py . --demo generate
+python3 scripts/demo_fixture.py . --demo all
+```
+
+The demo kit includes copy-pasteable walkthroughs for generation/validation and installed-profile usage, a redaction checklist, cleanup guidance, and a smoke test suitable for CI.
 
 ### Guided profile wizard
 
