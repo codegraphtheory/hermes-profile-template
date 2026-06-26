@@ -2,6 +2,11 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.7
+
+- Added generated profile repository metadata guidance for descriptions, homepage URLs, default topics, and domain-specific topic examples.
+- Linked publication guidance to the profile distribution contract so generated profiles can stay discoverable without overclaiming affiliations or integrations.
+
 ## 0.6.6
 
 - Added a growth-focused README first screen with the X demo link, fast try-it path, and prompt-to-repo positioning.

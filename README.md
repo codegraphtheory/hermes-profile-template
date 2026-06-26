@@ -438,22 +438,10 @@ Before publishing, make the generated repo easy to find and evaluate:
 
 - Put the install command near the top of the README.
 - Keep a clear one-sentence repository description.
-- Use GitHub topics such as `hermes-agent`, `ai-agents`, `agent-profile`, `profile-distribution`, and domain-specific topics.
 - Keep `github-repo-metadata.yaml` current.
+- Use the description, homepage, and topic recommendations in [`docs/profile-distribution-contract.md`](docs/profile-distribution-contract.md#recommended-github-metadata-for-generated-profiles).
 - Add catalog-native snippets from `templates/catalog/` when submitting to profile catalogs or resource lists.
 - Avoid fake affiliations, fake community links, fake support channels, or claims that are not configured.
-
-Preview metadata changes:
-
-```bash
-python3 scripts/apply_github_metadata.py --repo YOUR_ORG/YOUR_PROFILE_REPO
-```
-
-Apply after reviewing the dry run:
-
-```bash
-python3 scripts/apply_github_metadata.py --repo YOUR_ORG/YOUR_PROFILE_REPO --apply
-```
 
 ## What to customize
 
