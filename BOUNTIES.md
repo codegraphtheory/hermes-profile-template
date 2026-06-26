@@ -35,6 +35,7 @@ Main commits:
 
 - [`f9e7d88`](https://github.com/codegraphtheory/hermes-profile-template/commit/f9e7d88d1853cbb92d992a6b358e3bcb849c9b51): integrated the first-time contributor toolkit.
 - [`a4f445b`](https://github.com/codegraphtheory/hermes-profile-template/commit/a4f445b19b9e4f336ed833ee9b2cf243d310157c): normalized co-author credit.
+- [`f34df04`](https://github.com/codegraphtheory/hermes-profile-template/commit/f34df04e6e3074cd97994b4175282724899074fd): integrated the second contributor follow-up wave and logged payout-ready wallets.
 
 ## How future bounties should be handled
 
