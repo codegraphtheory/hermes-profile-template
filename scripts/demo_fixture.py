@@ -13,6 +13,7 @@ from pathlib import Path
 
 FORBIDDEN_NAMES = {".env", "auth.json", "state.db"}
 FORBIDDEN_PARTS = {"memories", "sessions", "logs"}
+MARKER_NAME = ".hermes-demo-fixture"
 
 
 @dataclass(frozen=True)
@@ -75,6 +76,7 @@ def main() -> int:
     args = parser.parse_args()
     root = Path(args.path).resolve()
     workspace = Path(tempfile.mkdtemp(prefix="hermes-demo-"))
+    (workspace / MARKER_NAME).write_text("created by scripts/demo_fixture.py\n", encoding="utf-8")
     results: list[DemoResult] = []
     try:
         if args.demo in {"generate", "all"}:

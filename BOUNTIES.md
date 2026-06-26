@@ -15,6 +15,16 @@ Scope: this page records bounty payouts that were confirmed in the PR threads du
 | @xNicky2k | [#47](https://github.com/codegraphtheory/hermes-profile-template/pull/47) | `HvUzii2Dt2WAErMQ1ade6d5qNDthu7nPF8BUZzh8AhgR` | [Solscan tx](https://solscan.io/tx/3KzDAKcMu4XbDgUNtKXLpwPAVwqcKMuBibBiYAxUT4xVVQZWVwJw6ie8PgveqKqgSgPEZFnW7beXX7g8asfKRQn1) |
 | @iyeanur6-cyber | [#22](https://github.com/codegraphtheory/hermes-profile-template/pull/22) | `297hZrAVMi3rujS1vxSEbrD43ezfms7snkPHaTGaLeka` | [Solscan tx](https://solscan.io/tx/2njide2JKtwqGwhoiuUfS8wmn3aLqUG7Bpsisrfjo8ZZBVg9ynfYLhjevgfPf4i3BVfTUmw2eQbcreZMRySGWaiA) |
 
+## Payout-ready accepted work awaiting transaction proof
+
+These entries have accepted maintainer integration credit and a wallet shared in the PR thread, but no Solana transaction proof has been recorded yet. Move a row to the paid table only after a Solscan transaction link is available.
+
+| Contributor | PRs | Wallet | Status |
+| --- | --- | --- | --- |
+| @yanyishuai | [#80](https://github.com/codegraphtheory/hermes-profile-template/pull/80), [#79](https://github.com/codegraphtheory/hermes-profile-template/pull/79), [#78](https://github.com/codegraphtheory/hermes-profile-template/pull/78), [#77](https://github.com/codegraphtheory/hermes-profile-template/pull/77) | `Do4v7foHJvRJLpRRoGaVPWX6DDEjX3yTK7J91gpwUQpE` | Awaiting payout transaction proof |
+| @dollarop | [#63](https://github.com/codegraphtheory/hermes-profile-template/pull/63) | `AFu18BkP4M3hA29A6JrsBMPacTzDeNiEeoRhcAnJK9G` | Awaiting payout transaction proof |
+| @Kukrushka | [#65](https://github.com/codegraphtheory/hermes-profile-template/pull/65), [#62](https://github.com/codegraphtheory/hermes-profile-template/pull/62), [#61](https://github.com/codegraphtheory/hermes-profile-template/pull/61), [#60](https://github.com/codegraphtheory/hermes-profile-template/pull/60), [#59](https://github.com/codegraphtheory/hermes-profile-template/pull/59), [#57](https://github.com/codegraphtheory/hermes-profile-template/pull/57) | `2SwxWicLsZq7VxtiyJy1S785zJhiZbmmrQJbFdZcVM6h` | Awaiting payout transaction proof |
+
 ## Contributor credit
 
 The contributor wave was consolidated into a maintainer-reviewed integration so the repo could keep code quality high while still preserving first-time contributor credit.
