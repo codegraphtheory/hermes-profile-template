@@ -2,6 +2,10 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.6
+
+- Added four complete generated profile examples: security-reviewer, database-migration-reviewer, release-manager, research-assistant — each with full distribution files, validated params, and install instructions.
+
 ## 0.6.5
 
 - Integrated community contributor toolkit: release readiness, scorecard, discovery, wizard, demo, catalog, examples, and reusable validation action.
