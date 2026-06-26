@@ -2,6 +2,13 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.4
+
+- Fixed live Hermes profile evaluation so generated agents run from the generated profile directory instead of inheriting the template author's repo context.
+- Added isolated live-profile installation, configurable provider/model/timeout/max-turn controls, and cleanup for noisy Hermes CLI warning output.
+- Stopped generated customer profiles from bundling template authoring skills, keeping generated agents focused on their domain workflow.
+- Reworked the local web demo into a finite-state interface with discrete prompt, progress, and fullscreen results panels plus smooth transitions and back/start-over navigation.
+
 ## 0.6.3
 
 - Added real Hermes LLM calls to the local web demo pipeline: one call expands the sentence into a mature profile prompt, another reviews generated profile quality.
