@@ -155,8 +155,33 @@ Included tools:
 - `scripts/render_catalog_entry.py`: catalog-ready Markdown, YAML, and PR-body snippets.
 - `scripts/demo_fixture.py`: safe temporary demo workspaces with runtime-state checks.
 - `scripts/release_readiness.py`: changelog, version, validation, compile, and secret hygiene release report.
-- `.github/actions/validate-profile/action.yml`: reusable validation action for generated profile repos.
+- `.github/actions/validate-profile/action.yml`: reusable composite action for generated profile repos.
+- `.github/workflows/reusable-validate.yml`: callable reusable workflow — generated repos call it with `uses:` or copy `templates/profile/validate.yml.tmpl` as their own `.github/workflows/validate.yml`.
 - `examples/gallery.json`: lightweight generated-profile gallery metadata.
+
+### CI for generated profile repos
+
+Generated profile repos produced by this template ship with a ready-made `.github/workflows/validate.yml` that runs on every push and PR. The workflow installs dependencies, compiles Python scripts, and validates the profile distribution.
+
+**Option A — call the reusable workflow (stays up-to-date automatically):**
+
+```yaml
+# .github/workflows/validate.yml in your generated repo
+jobs:
+  validate:
+    uses: codegraphtheory/hermes-profile-template/.github/workflows/reusable-validate.yml@main
+    with:
+      python-version: "3.11"
+      run-smoke: false
+```
+
+**Option B — copy the standalone template (no dependency on this repo):**
+
+```bash
+cp templates/profile/validate.yml.tmpl .github/workflows/validate.yml
+```
+
+Both options are available in generated repos. The `generate_profile.py` script places `validate.yml.tmpl` as `.github/workflows/validate.yml` in every generated distribution.
 
 ### Guided profile wizard
 

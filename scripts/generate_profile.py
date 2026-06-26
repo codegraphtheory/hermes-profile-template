@@ -434,6 +434,22 @@ def copy_support_files(template_root: Path, output: Path) -> None:
         src = template_root / rel
         if src.exists():
             shutil.copytree(src, output / rel, dirs_exist_ok=True, ignore=ignore)
+
+    # Replace template-specific workflows with the generated-repo workflow.
+    # release-guard.yml and the template's validate.yml target this authoring
+    # repo — generated profile repos need a simpler, standalone CI workflow.
+    _TEMPLATE_ONLY_WORKFLOWS = {"release-guard.yml", "validate.yml", "reusable-validate.yml"}
+    out_workflows = output / ".github" / "workflows"
+    for wf in _TEMPLATE_ONLY_WORKFLOWS:
+        stale = out_workflows / wf
+        if stale.exists():
+            stale.unlink()
+    # Install the generated-repo-specific validation workflow.
+    workflow_tmpl = template_root / "templates" / "profile" / "validate.yml.tmpl"
+    if workflow_tmpl.exists():
+        out_workflows.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(workflow_tmpl, out_workflows / "validate.yml")
+
     # Generated customer profiles should contain only their domain workflow
     # skills. The template's authoring skills are useful for this repo, but
     # they make generated agents look like profile-construction agents.

@@ -2,6 +2,10 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.6
+
+- Added reusable GitHub Actions workflow for generated profile repos: `.github/workflows/reusable-validate.yml` (callable via `uses:`) and `templates/profile/validate.yml.tmpl` (standalone copy). Updated `generate_profile.py` to install the generated-repo workflow and remove template-specific CI from generated distributions.
+
 ## 0.6.5
 
 - Integrated community contributor toolkit: release readiness, scorecard, discovery, wizard, demo, catalog, examples, and reusable validation action.
