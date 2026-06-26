@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -247,8 +248,6 @@ Use this profile when the user asks to analyze, review, triage, generate, summar
 ### Required bundled skills
 
 - {domain['skill']}: a focused procedure for the profile's core workflow.
-- prompt-engineering: preserves the simple-sentence to mature-prompt workflow for future regeneration.
-- profile-craft: validates and maintains installable Hermes profile distribution structure.
 
 ### Environment variables
 
@@ -281,8 +280,8 @@ def params_for(sentence: str, output: Path, profile_prompt_override: str | None 
         "author": "Hermes profile author",
         "version": "0.1.0",
         "license": "MIT",
-        "model_provider": "openrouter",
-        "model_default": "anthropic/claude-sonnet-4",
+        "model_provider": os.getenv("HERMES_PROFILE_MODEL_PROVIDER", "openrouter"),
+        "model_default": os.getenv("HERMES_PROFILE_MODEL_DEFAULT", "anthropic/claude-sonnet-4"),
         "template_source": {
             "name": "codegraphtheory/hermes-profile-template",
             "url": "https://github.com/codegraphtheory/hermes-profile-template",

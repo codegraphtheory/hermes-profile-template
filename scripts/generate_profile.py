@@ -294,19 +294,7 @@ The mature prompt used to generate or refine this profile is preserved in:
 docs/profile-prompt.md
 ```
 
-When starting from a simple sentence, expand it with `skills/prompt-engineering/SKILL.md`, place the mature prompt in `templates/profile.params.yaml` as `profile_prompt`, then regenerate or update this profile.
-
-## Generate another profile from this one
-
-This distribution includes a deterministic generator:
-
-```bash
-python3 scripts/generate_profile.py \
-  --params templates/profile.params.yaml \
-  --output ../my-new-profile
-```
-
-Edit `templates/profile.params.yaml` first to customize name, mission, principles, env vars, and toolsets.
+This document is included for transparency so reviewers can understand the profile's design intent.
 
 ## Quality gates
 
@@ -387,9 +375,9 @@ This profile was generated from structured params. Use this document to record t
 
 {description}
 
-## Regeneration note
+## Maintenance note
 
-For future changes, start with a simple sentence, expand it with the prompt-engineering workflow in `skills/prompt-engineering/SKILL.md`, write the result to the `profile_prompt` field in `templates/profile.params.yaml`, then regenerate or edit the profile with validation.
+Keep `docs/profile-prompt.md` aligned with any substantive behavior changes so reviewers can trace why this profile behaves the way it does.
 """
 
 
@@ -446,19 +434,9 @@ def copy_support_files(template_root: Path, output: Path) -> None:
         src = template_root / rel
         if src.exists():
             shutil.copytree(src, output / rel, dirs_exist_ok=True, ignore=ignore)
-    # When this repository is installed as a Hermes profile, Hermes may seed the
-    # profile with many bundled user skills. Do not copy that entire runtime
-    # skills directory into generated repos. Only copy this template's own
-    # authoring skills as starter examples.
-    for skill_name in ["profile-craft", "prompt-engineering"]:
-        skill_dir = template_root / "skills" / skill_name
-        if skill_dir.exists():
-            shutil.copytree(
-                skill_dir,
-                output / "skills" / skill_name,
-                dirs_exist_ok=True,
-                ignore=ignore,
-            )
+    # Generated customer profiles should contain only their domain workflow
+    # skills. The template's authoring skills are useful for this repo, but
+    # they make generated agents look like profile-construction agents.
     for rel in ["LICENSE", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md", "requirements.txt", "Makefile"]:
         src_file = template_root / rel
         if src_file.exists():
@@ -503,6 +481,7 @@ def generate(params: dict[str, Any], output: Path, force: bool, template_root: P
     write(output / "mcp.json", "{\n  \"mcpServers\": {}\n}")
     write(output / "github-repo-metadata.yaml", render_github_metadata(slug, description, params))
     write(output / "templates" / "profile.params.yaml", render_params_example(slug, display_name, description, author))
+    (output / "skills").mkdir(parents=True, exist_ok=True)
     copy_support_files(template_root, output)
     write(output / "docs" / "profile-prompt.md", render_profile_prompt(params, display_name, description))
     template_source_file = render_template_source_file(params)
