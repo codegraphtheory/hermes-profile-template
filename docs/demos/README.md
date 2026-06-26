@@ -2,6 +2,10 @@
 
 Use this kit to record scaffold, validation, and install walkthroughs without exposing local secrets or private Hermes state.
 
+## Recipes
+
+- [Profile-builder terminal recording](profile-builder-terminal-recording.md): record installing this repo as `profile-architect`, asking it to generate a concrete profile, and showing validation output from a disposable Hermes home.
+
 ## Smoke checks
 
 ```bash

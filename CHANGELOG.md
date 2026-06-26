@@ -2,6 +2,10 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.6
+
+- Added a focused terminal recording recipe for the interactive `profile-architect` demo, including disposable Hermes home setup, asciinema and screen-recorder paths, narration, redaction checks, and cleanup.
+
 ## 0.6.5
 
 - Integrated community contributor toolkit: release readiness, scorecard, discovery, wizard, demo, catalog, examples, and reusable validation action.

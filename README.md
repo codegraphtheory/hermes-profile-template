@@ -158,6 +158,8 @@ Included tools:
 - `.github/actions/validate-profile/action.yml`: reusable validation action for generated profile repos.
 - `examples/gallery.json`: lightweight generated-profile gallery metadata.
 
+For recording the interactive profile-builder workflow without exposing local credentials or private Hermes state, see [`docs/demos/profile-builder-terminal-recording.md`](docs/demos/profile-builder-terminal-recording.md).
+
 ### Guided profile wizard
 
 ```bash
