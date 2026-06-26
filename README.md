@@ -120,6 +120,44 @@ The page lets someone type a sentence, then the backend creates:
 
 The local API is intentionally simple and demo-focused. It runs jobs under `/tmp/hermes-profile-web-demo-jobs` and uses only local files. Do not expose it directly to the public internet without adding authentication, quotas, sandboxing, and abuse controls.
 
+## Community contributor toolkit
+
+This release consolidates first-time contributor PR work into a maintainer-reviewed toolkit while preserving author credit.
+
+```bash
+make scorecard
+make discovery-check
+make demo-smoke
+make release-check
+```
+
+Included tools:
+
+- `scripts/profile_wizard.py`: guided `profile.params.yaml` creation for first-time authors.
+- `scripts/profile_scorecard.py`: JSON, Markdown, and terminal quality scoring for profile repos.
+- `scripts/discovery_optimizer.py`: GitHub metadata and README discovery checks.
+- `scripts/render_catalog_entry.py`: catalog-ready Markdown, YAML, and PR-body snippets.
+- `scripts/demo_fixture.py`: safe temporary demo workspaces with runtime-state checks.
+- `scripts/release_readiness.py`: changelog, version, validation, compile, and secret hygiene release report.
+- `.github/actions/validate-profile/action.yml`: reusable validation action for generated profile repos.
+- `examples/gallery.json`: lightweight generated-profile gallery metadata.
+
+### Guided profile wizard
+
+```bash
+python3 scripts/profile_wizard.py --class engineer --bundle open-source --output /tmp/profile.params.yaml --force
+python3 scripts/generate_profile.py --params /tmp/profile.params.yaml --output /tmp/engineering-reviewer
+python3 /tmp/engineering-reviewer/scripts/validate_profile.py /tmp/engineering-reviewer
+```
+
+### Scorecard and discovery checks
+
+```bash
+python3 scripts/profile_scorecard.py . --format markdown --threshold 80
+python3 scripts/discovery_optimizer.py .
+python3 scripts/render_catalog_entry.py . --source-url https://github.com/codegraphtheory/hermes-profile-template --format all
+```
+
 ## Usage paths
 
 Every path below ends in the same contract: a directory that passes validation and can be installed with `hermes profile install`.

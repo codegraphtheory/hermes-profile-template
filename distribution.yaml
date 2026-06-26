@@ -1,5 +1,5 @@
 name: hermes-profile-template
-version: 0.6.4
+version: 0.6.5
 description: "Prompt-to-repo authoring system with one-sentence generation, demo assets, diagrams, and installable Hermes Agent profile distributions."
 hermes_requires: ">=0.12.0"
 author: "CodeGraphTheory"
@@ -28,4 +28,6 @@ distribution_owned:
   - requirements.txt
   - Makefile
   - docs/
+  - examples/
+  - .github/actions/
   - .env.EXAMPLE
