@@ -1,4 +1,4 @@
-.PHONY: deps validate compile generate-smoke sentence-smoke smoke web-demo release-check clean
+.PHONY: deps validate compile generate-smoke sentence-smoke smoke web-demo release-check scorecard clean
 
 PYTHON ?= python3
 BASE ?= origin/main
@@ -31,6 +31,15 @@ smoke:
 
 release-check:
 	$(PYTHON) scripts/check_release_version.py --base $(BASE)
+
+scorecard:
+	$(PYTHON) scripts/scorecard.py .
+
+scorecard-json:
+	$(PYTHON) scripts/scorecard.py . --json
+
+scorecard-md:
+	$(PYTHON) scripts/scorecard.py . --markdown
 
 clean:
 	rm -rf $(GEN_ROOT) .pytest_cache .mypy_cache .ruff_cache htmlcov dist build

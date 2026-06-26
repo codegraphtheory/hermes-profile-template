@@ -1,0 +1,2 @@
+smoke:
+	echo "smoke ok"

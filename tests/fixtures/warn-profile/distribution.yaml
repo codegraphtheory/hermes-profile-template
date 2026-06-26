@@ -1,0 +1,7 @@
+name: test-warn-profile
+version: 1.0
+description: A profile with warnings.
+author: Test Author
+license: MIT
+hermes_requires: ">=0.12.0"
+env_requires: []
