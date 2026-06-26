@@ -16,6 +16,7 @@ These public Hermes profiles have verified `distribution.yaml` template lineage 
 | --- | --- | --- | --- |
 | [context-forge-rag](https://github.com/codegraphtheory/context-forge-rag) | Production RAG architecture, evaluation, observability, Pinecone workflows, and implementation-ready delivery specs. | `hermes profile install github.com/codegraphtheory/context-forge-rag --alias` | [![Star context-forge-rag](https://img.shields.io/github/stars/codegraphtheory/context-forge-rag?style=social)](https://github.com/codegraphtheory/context-forge-rag/stargazers) |
 | [chainforge](https://github.com/codegraphtheory/chainforge) | Security-first blockchain architect for smart contracts, Solana, Solidity, DeFi, audits, governance, and tokenomics. | `hermes profile install github.com/codegraphtheory/chainforge --alias` | [![Star chainforge](https://img.shields.io/github/stars/codegraphtheory/chainforge?style=social)](https://github.com/codegraphtheory/chainforge/stargazers) |
+| heavy-coder | Private multi-agent coding-team profile with issue-to-PR automation, critique, synthesis, and fail-closed merge policy. Coming soon! | Coming soon! | Coming soon! |
 
 If you publish a profile built from this template, keep `template_source` in `distribution.yaml` so it can be added here.
 
