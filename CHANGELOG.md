@@ -2,6 +2,11 @@
 
 All notable changes to this Hermes profile distribution are documented here.
 
+## 0.6.5
+
+- Integrated community contributor toolkit: release readiness, scorecard, discovery, wizard, demo, catalog, examples, and reusable validation action.
+- Credited first-time contributor PR authors through co-author trailers while consolidating overlapping implementations into one verified maintainer integration.
+
 ## 0.6.4
 
 - Fixed live Hermes profile evaluation so generated agents run from the generated profile directory instead of inheriting the template author's repo context.

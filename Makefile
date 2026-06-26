@@ -1,4 +1,4 @@
-.PHONY: deps validate compile generate-smoke sentence-smoke smoke web-demo release-check clean
+.PHONY: deps validate test compile generate-smoke sentence-smoke smoke web-demo release-check scorecard discovery-check demo-smoke clean
 
 PYTHON ?= python3
 BASE ?= origin/main
@@ -9,6 +9,9 @@ deps:
 
 validate:
 	$(PYTHON) scripts/validate_profile.py .
+
+test:
+	$(PYTHON) -m unittest discover -s tests
 
 compile:
 	PYTHONDONTWRITEBYTECODE=1 $(PYTHON) -m py_compile scripts/*.py
@@ -30,7 +33,16 @@ smoke:
 	scripts/smoke_install.sh
 
 release-check:
-	$(PYTHON) scripts/check_release_version.py --base $(BASE)
+	$(PYTHON) scripts/release_readiness.py --base $(BASE)
+
+scorecard:
+	$(PYTHON) scripts/profile_scorecard.py . --threshold 80
+
+discovery-check:
+	$(PYTHON) scripts/discovery_optimizer.py .
+
+demo-smoke:
+	$(PYTHON) scripts/demo_fixture.py . --demo generate
 
 clean:
 	rm -rf $(GEN_ROOT) .pytest_cache .mypy_cache .ruff_cache htmlcov dist build
