@@ -1,0 +1,8 @@
+description: Coordinates changelog updates, smoke validation, and rollout notes for
+  safe releases.
+homepage: ''
+topics:
+- hermes-agent
+- release
+- ci
+- smoke-testing

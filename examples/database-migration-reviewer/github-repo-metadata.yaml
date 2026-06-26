@@ -1,0 +1,8 @@
+description: Reviews SQL migrations for rollout, rollback, and data-loss risk before
+  production deploys.
+homepage: ''
+topics:
+- hermes-agent
+- database
+- migrations
+- rollback

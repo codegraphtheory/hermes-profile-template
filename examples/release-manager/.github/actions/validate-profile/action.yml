@@ -1,0 +1,19 @@
+name: Validate Hermes profile
+description: Validate a Hermes profile distribution with compile and smoke checks.
+inputs:
+  profile-path:
+    description: Path to the profile repository.
+    required: false
+    default: .
+runs:
+  using: composite
+  steps:
+    - name: Install dependencies
+      shell: bash
+      run: python -m pip install -r "${{ inputs.profile-path }}/requirements.txt"
+    - name: Compile scripts
+      shell: bash
+      run: python -m py_compile "${{ inputs.profile-path }}"/scripts/*.py
+    - name: Validate profile
+      shell: bash
+      run: python "${{ inputs.profile-path }}/scripts/validate_profile.py" "${{ inputs.profile-path }}"

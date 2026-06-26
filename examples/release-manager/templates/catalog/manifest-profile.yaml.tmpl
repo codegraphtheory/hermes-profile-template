@@ -1,0 +1,11 @@
+  - name: {{profile_slug}}
+    template: profiles/{{profile_slug}}
+    role: {{description}}
+    model_tier: sonnet
+    channels: [cli]
+    tokens:
+      required:
+        - { key: ANTHROPIC_API_KEY, provider: anthropic }
+      optional:
+        - { key: OPENROUTER_API_KEY, provider: openrouter }
+    recommended_plugins: []

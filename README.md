@@ -8,6 +8,15 @@ Hermes Agent core provides profile isolation and distribution install/update com
 
 For the boundary between Hermes core and this template, see [`docs/profile-distribution-contract.md`](docs/profile-distribution-contract.md).
 
+## Examples gallery
+
+Browse four complete generated profile distributions in [`examples/`](examples/README.md). Each example includes params, install commands, validation scripts, and a preserved design prompt.
+
+```bash
+python3 scripts/list_examples.py
+python3 scripts/validate_profile.py examples/security-reviewer
+```
+
 ## Built with this template
 
 These public Hermes profiles have verified `distribution.yaml` template lineage pointing back to this repository.
