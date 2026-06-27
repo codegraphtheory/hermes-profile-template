@@ -26,3 +26,4 @@ __pycache__/
 .ruff_cache/
 .DS_Store
 demos/vhs/staging/home/
+demos/vhs/staging/
