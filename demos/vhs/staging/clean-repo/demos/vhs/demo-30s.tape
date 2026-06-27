@@ -6,7 +6,10 @@ Set Height 720
 Set Theme "Builtin Dark"
 Set TypingSpeed 52ms
 
-Type "# Hermes profile demo" Enter
+Type "# Heavy Coder - skinned Hermes TUI" Enter
 Sleep 600ms
+
+Hide
 Type "bash demos/vhs/run-full-demo.sh" Enter
-Sleep 40s
+Sleep 30s
+Show
