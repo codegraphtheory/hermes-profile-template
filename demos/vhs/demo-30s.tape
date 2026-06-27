@@ -10,6 +10,8 @@ Type "# Hermes Profile Template · prompt to repo" Enter
 Sleep 600ms
 
 Hide
+Type "source demos/vhs/sanitize-recording-env.sh" Enter
+Sleep 300ms
 Type "python3 scripts/validate_profile.py ." Enter
 Sleep 5s
 Type "python3 scripts/profile_scorecard.py . | head -14" Enter
