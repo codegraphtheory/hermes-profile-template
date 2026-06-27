@@ -7,10 +7,6 @@
 
 One prompt in. A complete installable Hermes Agent profile repo out.
 
-<p align="center">
-  <img src="demos/demo.gif" alt="30-second demo: validation, scorecard, and profile install" width="100%">
-</p>
-
 `hermes-profile-template` is a developer authoring system for Hermes Agent profile distributions. Install this repo as a Hermes profile, describe the profile you want, and have Hermes produce a GitHub-ready repository with `SOUL.md`, `distribution.yaml`, safe config, docs, validation scripts, CI, release checks, and install instructions.
 
 Hermes Agent core provides profile isolation and distribution install/update commands such as `hermes profile install` and `hermes profile update`. This repository supplies the author workflow around that runtime: prompt intake, deterministic generation, validation, smoke testing, publication hygiene, and discoverability assets.
