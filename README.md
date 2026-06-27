@@ -7,15 +7,11 @@
 
 One prompt in. A complete installable Hermes Agent profile repo out.
 
-`hermes-profile-template` is a developer authoring system for Hermes Agent profile distributions. Install this repo as a Hermes profile, describe the profile you want, and have Hermes produce a GitHub-ready repository with `SOUL.md`, `distribution.yaml`, safe config, docs, validation scripts, CI, release checks, and install instructions.
-
 <p align="center">
-  <a href="https://x.com/graphtheory/status/2070334487943102926?s=20">
-    <img src="docs/assets/x-demo-card.svg" alt="Watch the GraphTheory demo showing one prompt becoming an installable Hermes Agent profile repo" width="100%">
-  </a>
+  <img src="demos/demo.gif" alt="30-second demo: validation, scorecard, and profile install" width="100%">
 </p>
 
-Watch the live demo from GraphTheory: [prompt to profile repo on X](https://x.com/graphtheory/status/2070334487943102926?s=20). GitHub README Markdown does not run X embed scripts or iframes, so this README embeds a linked demo card instead of third-party JavaScript.
+`hermes-profile-template` is a developer authoring system for Hermes Agent profile distributions. Install this repo as a Hermes profile, describe the profile you want, and have Hermes produce a GitHub-ready repository with `SOUL.md`, `distribution.yaml`, safe config, docs, validation scripts, CI, release checks, and install instructions.
 
 Hermes Agent core provides profile isolation and distribution install/update commands such as `hermes profile install` and `hermes profile update`. This repository supplies the author workflow around that runtime: prompt intake, deterministic generation, validation, smoke testing, publication hygiene, and discoverability assets.
 
