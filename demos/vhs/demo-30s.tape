@@ -1,26 +1,23 @@
 Output demos/demo.gif
 Set Shell "bash"
-Set FontSize 20
+Set FontSize 16
 Set Width 1280
 Set Height 720
-Set Theme "Catppuccin Mocha"
-Set TypingSpeed 50ms
-
-Type "# Hermes Profile Template · prompt to repo" Enter
-Sleep 600ms
+Set Theme "Builtin Dark"
+Set TypingSpeed 55ms
 
 Hide
 Type "source demos/vhs/sanitize-recording-env.sh" Enter
-Sleep 300ms
-Type "python3 scripts/validate_profile.py ." Enter
-Sleep 5s
-Type "python3 scripts/profile_scorecard.py . | head -14" Enter
-Sleep 6s
-Type "head -8 distribution.yaml" Enter
-Sleep 4s
+Type "bash demos/vhs/bin/bootstrap-demo-profile.sh" Enter
+Sleep 8s
 Show
 
-Type "hermes profile install github.com/codegraphtheory/hermes-profile-template --name profile-architect --yes" Enter
-Sleep 4s
-Type "# One sentence in · installable profile distribution out" Enter
-Sleep 3s
+Type "# Skinned Hermes TUI (/help + profile skin)" Enter
+Sleep 800ms
+
+Hide
+Type "source demos/vhs/sanitize-recording-env.sh" Enter
+Sleep 200ms
+Type "bash demos/vhs/bin/hermes-tui-skin-demo.sh" Enter
+Sleep 22s
+Show
